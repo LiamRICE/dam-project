@@ -8,10 +8,14 @@
 import SwiftUI
 
 @main
-struct dam_projectApp: App {
+struct dam_project_app: App {
+    
+    @StateObject var ingredientListVM: IngredientListVM = IngredientListVM()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(ingredientListVM)
         }
     }
 }

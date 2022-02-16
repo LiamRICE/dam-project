@@ -2,15 +2,20 @@
 //  ContentView.swift
 //  dam-project
 //
-//  Created by m1 on 16/02/2022.
+//  Created by Liam RICE on 16/02/2022.
 //
 
 import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        NavigationView{
+            VStack{
+                NavigationLink(destination: IngredientListView()){
+                    Text("Ingredients")
+                }
+            }
+        }.navigationTitle("Menu")
     }
 }
 
