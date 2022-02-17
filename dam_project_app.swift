@@ -11,11 +11,13 @@ import SwiftUI
 struct dam_project_app: App {
     
     @StateObject var ingredientListVM: IngredientListVM = IngredientListVM()
+    @StateObject var ingredientVM: IngredientVM = IngredientVM()
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .environmentObject(ingredientListVM)
+                .environmentObject(ingredientVM)
         }
     }
 }

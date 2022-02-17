@@ -7,12 +7,19 @@
 
 import Foundation
 
-public enum IngredientIntent{
+public enum IngredientIntent: Equatable{
     case ready
-    case changingLibelle(String)
-    case changedLibelle(String)
-    case changingUnit(String)
-    case changedUnit(String)
-    case changingUnitPrice(Double)
-    case changedUnitPrice(Double)
+    case modifyingIngredient(Ingredient)
+    case modifiedIngredient(Ingredient)
+    case addingIngredient(Ingredient)
+    case addedIngredient(Ingredient)
+    
+    mutating func intentToChange(modifying: Ingredient){
+        print("IngredientState : modifyingIngredient")
+        self = .modifyingIngredient(modifying)
+    }
+    
+    mutating func intentToChange(adding: Ingredient){
+        self = .addingIngredient(adding)
+    }
 }

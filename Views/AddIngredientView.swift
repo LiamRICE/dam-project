@@ -7,8 +7,13 @@
 
 import SwiftUI
 
-struct IngredientView: View {
+struct AddIngredientView: View {
     var cols = [GridItem(.flexible()), GridItem(.flexible())]
+    let formatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter
+    }()
     
     @EnvironmentObject var ingredientListVM: IngredientListVM
     @EnvironmentObject var ingredientVM: IngredientVM
@@ -17,7 +22,7 @@ struct IngredientView: View {
         VStack{
             LazyVGrid(columns:cols, alignment:.leading){
                 Text("Code:")
-                Text(String(ingredientVM.code))
+                TextField("", value: $ingredientVM.code, formatter: formatter)
                 Text("Libelle:")
                 TextField("", text: $ingredientVM.libelle)
                 Text("Unité:")
@@ -25,7 +30,7 @@ struct IngredientView: View {
                 Text("Prix unitaire:")
                 Stepper("", value: $ingredientVM.unitPrice, in: 0...9999, step: 0.01)
                 Text("Stocks:")
-                Stepper("", value: $ingredientVM.stocks, in: 0...9999, step: 0.001)
+                Stepper("", value: $ingredientVM.unitPrice, in: 0...9999, step: 0.001)
             }
             LazyVGrid(columns:cols, alignment:.leading){
                 Text("Valeur du stock:")
@@ -34,8 +39,8 @@ struct IngredientView: View {
                 Text(String(ingredientVM.allergen))
             }
             HStack{
-                Button("Enregistrer"){
-                    self.ingredientVM.ingredientState.intentToChange(modifying: Ingredient(code: ingredientVM.code, libelle: ingredientVM.libelle, unit: ingredientVM.unit, unitprice: ingredientVM.unitPrice, stocks: ingredientVM.stocks, stockvalue: ingredientVM.stockValue, allergene: ingredientVM.allergen))
+                Button("Ajouter"){
+                    ingredientVM.ingredientState.intentToChange(adding: Ingredient(code: ingredientVM.code, libelle: ingredientVM.libelle, unit: ingredientVM.unit, unitprice: ingredientVM.unitPrice, stocks: ingredientVM.stocks, stockvalue: ingredientVM.stockValue, allergene: ingredientVM.allergen))
                 }
             }
         }
@@ -46,7 +51,7 @@ struct IngredientView: View {
     
     private func valueChanged(_ newValue: IngredientIntent){
         switch self.ingredientVM.ingredientState{
-        case .modifiedIngredient(_):
+        case .addedIngredient(_):
             print("IngredientState : ready")
             self.ingredientVM.ingredientState = .ready
             self.ingredientListVM.ingredientListState = .changedIngredientList
@@ -56,7 +61,7 @@ struct IngredientView: View {
     }
 }
 
-struct IngredientView_Previews: PreviewProvider {
+struct AddIngredientView_Previews: PreviewProvider {
     static var previews: some View {
         IngredientView()
     }

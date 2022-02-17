@@ -10,6 +10,7 @@ import SwiftUI
 struct IngredientListView: View {
     
     @EnvironmentObject var ingredientListVM : IngredientListVM
+    @EnvironmentObject var ingredientVM: IngredientVM
     
     private func stateChanged(_ newValue: IngredientListIntent){
         switch newValue {
@@ -27,18 +28,17 @@ struct IngredientListView: View {
     
     var body: some View {
         VStack{
-            Button("Add"){
-                print(ingredientListVM.ingredientList.count)
-                ingredientListVM.ingredientList.append(Ingredient(code: 7, libelle: "crap", unit: "metric crapton", unitprice: 1, stocks: 1, stockvalue: 1, allergene: 0))
-                ingredientListVM.ingredientListState.intentToChange()
-                print(ingredientListVM.ingredientList.count)
+            NavigationLink(destination: AddIngredientView()){
+                Text("Ajouter un ingrédient")
             }
             TextField("search", text: $ingredientListVM.search).onSubmit {
                 ingredientListVM.ingredientList = searchList(search: ingredientListVM.search)
             }
             List{
                 ForEach(ingredientListVM.ingredientList, id: \.code){
-                    ingredient in NavigationLink(destination: IngredientView(ingredient: ingredient)){
+                    ingredient in NavigationLink(destination: IngredientView().onAppear(perform: {
+                        ingredientVM.setIngredient(ingredient: ingredient)
+                    })){
                         Text("\(ingredient.code) - \(ingredient.libelle)")
                     }
                 }

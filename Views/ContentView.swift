@@ -8,10 +8,16 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @EnvironmentObject var ingredientListVM: IngredientListVM
+    
     var body: some View {
         NavigationView{
             VStack{
-                NavigationLink(destination: IngredientListView()){
+                NavigationLink(destination: IngredientListView().task {
+                    print("loading data...")
+                    ingredientListVM.loadModel()
+                }){
                     Text("Ingredients")
                 }
             }

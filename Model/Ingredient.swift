@@ -7,22 +7,36 @@
 
 import Foundation
 
-public class Ingredient: Decodable{
+public class Ingredient: Equatable{
+    public static func == (lhs: Ingredient, rhs: Ingredient) -> Bool {
+        return lhs.code == rhs.code
+    }
+    
     var code: Int
     var libelle: String
     var unit: String
-    var unitprice: Double
+    var unitPrice: Double
     var stocks: Double
-    var stockvalue: Double
-    var allergene: Int
+    var stockValue: Double
+    var allergen: Bool
     
-    init(code: Int, libelle: String, unit: String, unitprice: Double, stocks: Double, stockvalue: Double, allergene: Int){
+    init(code: Int, libelle: String, unit: String, unitprice: Double, stocks: Double, stockvalue: Double, allergene: Bool){
         self.code = code
         self.libelle = libelle
         self.unit = unit
-        self.unitprice = unitprice
+        self.unitPrice = unitprice
         self.stocks = stocks
-        self.stockvalue = stockvalue
-        self.allergene = allergene
+        self.stockValue = stockvalue
+        self.allergen = allergene
+    }
+    
+    init(){
+        self.code = 0
+        self.libelle = "libelle"
+        self.unit = "unite"
+        self.unitPrice = 0
+        self.stocks = 0
+        self.stockValue = 0
+        self.allergen = false
     }
 }
