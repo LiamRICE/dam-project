@@ -7,16 +7,16 @@
 
 import Foundation
 
-public class StepDTO: Decodable, Encodable{
-    var id: Int
+public class StepDTO: Codable{
+    var stepid: Int
     var title: String
     var description: String
     var time: Int
     var rank: Int
-    var ingredients: [IngredientDTO]
+    var ingredients: [StepIngredientDTO]
     
-    init(id: Int, title: String, desc: String, time: Int, rk: Int, ingredients: [IngredientDTO]){
-        self.id = id
+    init(id: Int, title: String, desc: String, time: Int, rk: Int, ingredients: [StepIngredientDTO]){
+        self.stepid = id
         self.title = title
         self.description = desc
         self.time = time

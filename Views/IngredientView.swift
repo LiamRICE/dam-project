@@ -31,7 +31,7 @@ struct IngredientView: View {
                 Text("Valeur du stock:")
                 Text(String(ingredientVM.stockValue))
                 Text("Allergène:")
-                Text(String(ingredientVM.allergen))
+                Toggle("Allergène:", isOn: $ingredientVM.allergen)
             }
             HStack{
                 Button("Enregistrer"){

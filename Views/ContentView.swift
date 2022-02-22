@@ -14,11 +14,11 @@ struct ContentView: View {
     var body: some View {
         NavigationView{
             VStack{
-                NavigationLink(destination: IngredientListView().task {
-                    print("loading data...")
-                    ingredientListVM.loadModel()
-                }){
+                NavigationLink(destination: IngredientListView()){
                     Text("Ingredients")
+                }
+                NavigationLink(destination: TechdocListView()){
+                    Text("Technical Documents")
                 }
             }
         }.navigationTitle("Menu")

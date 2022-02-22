@@ -12,7 +12,6 @@ public class IngredientList{
     
     func loadData() async {
         self.ingredientList = await DataDAO.getIngredientList()
-        await DataDAO.getTechnicaldocList()
     }
     
     init(list: [Ingredient]){

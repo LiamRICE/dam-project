@@ -13,9 +13,9 @@ public class Step{
     var description: String
     var time: Int
     var rank: Int
-    var ingredients: [Ingredient]
+    var ingredients: [StepIngredient]
     
-    init(id: Int, title: String, desc: String, time: Int, rk: Int, ingredients: [Ingredient]){
+    init(id: Int, title: String, desc: String, time: Int, rk: Int, ingredients: [StepIngredient]){
         self.id = id
         self.title = title
         self.description = desc

@@ -28,29 +28,29 @@ struct AddIngredientView: View {
                 Text("Unité:")
                 TextField("", text: $ingredientVM.unit)
                 Text("Prix unitaire:")
-                Stepper("", value: $ingredientVM.unitPrice, in: 0...9999, step: 0.01)
+                TextField("00.0", value: $ingredientVM.unitPrice, formatter: formatter)
                 Text("Stocks:")
-                Stepper("", value: $ingredientVM.unitPrice, in: 0...9999, step: 0.001)
+                TextField("", value: $ingredientVM.stocks, formatter: formatter)
             }
             LazyVGrid(columns:cols, alignment:.leading){
                 Text("Valeur du stock:")
                 Text(String(ingredientVM.stockValue))
                 Text("Allergène:")
-                Text(String(ingredientVM.allergen))
+                Toggle("Allergène:", isOn: $ingredientVM.allergen)
             }
             HStack{
                 Button("Ajouter"){
-                    ingredientVM.ingredientState.intentToChange(adding: Ingredient(code: ingredientVM.code, libelle: ingredientVM.libelle, unit: ingredientVM.unit, unitprice: ingredientVM.unitPrice, stocks: ingredientVM.stocks, stockvalue: ingredientVM.stockValue, allergene: ingredientVM.allergen))
+                    ingredientListVM.ingredientListState.intentToChange(adding: Ingredient(code: ingredientVM.code, libelle: ingredientVM.libelle, unit: ingredientVM.unit, unitprice: ingredientVM.unitPrice, stocks: ingredientVM.stocks, stockvalue: ingredientVM.stockValue, allergene: ingredientVM.allergen))
                 }
             }
         }
-        .onChange(of: self.ingredientVM.ingredientState, perform: {
+        .onChange(of: self.ingredientListVM.ingredientListState, perform: {
             newValue in valueChanged(newValue)
         })
     }
     
-    private func valueChanged(_ newValue: IngredientIntent){
-        switch self.ingredientVM.ingredientState{
+    private func valueChanged(_ newValue: IngredientListIntent){
+        switch self.ingredientListVM.ingredientListState{
         case .addedIngredient(_):
             print("IngredientState : ready")
             self.ingredientVM.ingredientState = .ready

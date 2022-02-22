@@ -22,6 +22,14 @@ public class IngredientListVM: ObservableObject{
                 self.model.ingredientList = self.ingredientList
                 self.ingredientListState = .changedIngredientList
                 print("List State : changedIngredientList")
+            case .addingIngredient(let ingredient):
+                self.ingredientList.append(ingredient) // local add
+                self.ingredientList.sort(by: {
+                    i1, i2 in return i1.code < i2.code
+                })
+                self.model.ingredientList = self.ingredientList
+                Task{await DataDAO.postIngredient(ingredient: ingredient)} // distant add
+                self.ingredientListState = .addedIngredient(ingredient)
             default:
                 return
             }
@@ -44,10 +52,8 @@ public class IngredientListVM: ObservableObject{
         return ret
     }
     
-    public func loadModel() {
-        Task{
-            await self.model.loadData()
-            self.ingredientList = self.model.ingredientList
-        }
+    public func loadModel() async {
+        await self.model.loadData()
+        self.ingredientList = self.model.ingredientList
     }
 }

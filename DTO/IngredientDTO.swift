@@ -25,4 +25,12 @@ public class IngredientDTO: Decodable, Encodable{
         self.stockvalue = stockvalue
         self.allergene = allergene
     }
+    
+    public static func translate(ingredientdto: IngredientDTO) -> Ingredient{
+        return Ingredient(code: ingredientdto.code, libelle: ingredientdto.libelle, unit: ingredientdto.unit, unitprice: ingredientdto.unitprice, stocks: ingredientdto.stocks, stockvalue: ingredientdto.stockvalue, allergene: ingredientdto.allergene==1)
+    }
+    
+    public static func translate(ingredient: Ingredient) -> IngredientDTO{
+        return IngredientDTO(code: ingredient.code, libelle: ingredient.libelle, unit: ingredient.unit, unitprice: ingredient.unitPrice, stocks: ingredient.stocks, stockvalue: ingredient.stockValue, allergene: ingredient.allergen ? 1 : 0)
+    }
 }

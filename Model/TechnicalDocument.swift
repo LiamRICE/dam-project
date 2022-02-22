@@ -7,7 +7,8 @@
 
 import Foundation
 
-public class TechnicalDocument{
+public class TechnicalDocument: Equatable{
+    
     var id: Int
     var name: String
     var header: String
@@ -32,5 +33,23 @@ public class TechnicalDocument{
         self.usesCharges = charges
         self.assaisonnemments = ass
         self.steps = steps
+    }
+    
+    init(){
+        self.id = 0
+        self.name = "name"
+        self.header = "header"
+        self.author = "author"
+        self.responsable = "respo"
+        self.category = "cat"
+        self.nbServed = 0
+        self.byDefault = true
+        self.usesCharges = true
+        self.assaisonnemments = 0
+        self.steps = []
+    }
+    
+    public static func == (lhs: TechnicalDocument, rhs: TechnicalDocument) -> Bool {
+        return lhs.id == rhs.id
     }
 }

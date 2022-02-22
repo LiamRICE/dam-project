@@ -30,9 +30,6 @@ public class IngredientVM: ObservableObject{
                 print("IngredientState : modifiedIngredient")
                 Task{await DataDAO.putIngredient(ingredient: ingredient)}
                 self.ingredientState = .modifiedIngredient(ingredient)
-            case .addingIngredient(let ingredient):
-                Task{await DataDAO.postIngredient(ingredient: ingredient)}
-                self.ingredientState = .addedIngredient(ingredient)
             default:
                 return
             }
