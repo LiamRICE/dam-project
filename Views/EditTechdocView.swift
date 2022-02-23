@@ -16,6 +16,7 @@ struct EditTechdocView: View {
     }()
     
     @EnvironmentObject var technicalDocumentVM: TechnicalDocumentVM
+    @StateObject var stepVM: StepVM = StepVM()
     
     var body: some View {
         VStack{
@@ -43,6 +44,12 @@ struct EditTechdocView: View {
             List{
                 ForEach($technicalDocumentVM.steps, id: \.id){$step in
                     VStack{
+                        Button("Up"){
+                            technicalDocumentVM.decreaseStepRank(step: step)
+                        }
+                        Button("Down"){
+                            technicalDocumentVM.increaseStepRank(step: step)
+                        }
                         LazyVGrid(columns: cols,alignment: .leading){
                             Text("Titre: ")
                             TextField("",text:$step.title)
@@ -51,17 +58,11 @@ struct EditTechdocView: View {
                             Text("Description: ")
                             TextField("",text:$step.description)
                         }
-                        if($step.ingredients.count>0){Text("Ingrédients:")}
-                        ForEach($step.ingredients, id: \.code){$ingredient in
-                            LazyVGrid(columns: cols,alignment: .leading){
-                                Text("Nom: ")
-                                TextField("",text:$ingredient.libelle)
-                                Text("Quantité: ")
-                                LazyVGrid(columns: cols,alignment: .leading){
-                                    TextField("",value: $ingredient.quantity,formatter:formatter)
-                                    TextField("",text: $ingredient.unit)
-                                }
-                            }
+                        if($step.ingredients.count>0){Button("Ingrédients:"){
+                            stepVM.setStep(step: step)
+                            stepVM.showingSheet.toggle()
+                        }
+                        .sheet(isPresented: $stepVM.showingSheet){StepIngredientSheetView(sVM: stepVM)}
                         }
                     }
                 }
@@ -79,6 +80,7 @@ struct EditTechdocView: View {
                 }
                 Button("Annuler"){
                     // TODO - reset modifications
+                    technicalDocumentVM.technicalDocumentState.intentToChange(cancel: true)
                 }
             }
             HStack{
@@ -93,12 +95,24 @@ struct EditTechdocView: View {
         .onChange(of: technicalDocumentVM.technicalDocumentState, perform: {
             newValue in changeValue(newValue)
         })
+        .onChange(of: stepVM.stepState, perform: {
+            newValue in changeValue(newValue)
+        })
     }
     
     private func changeValue(_ newValue: TechnicalDocumentIntent){
         switch newValue{
-        case .editedTechnicalDocument(_):
+        case .editedTechnicalDocument(_), .cancelledTechnicalDocumentModifications:
             technicalDocumentVM.technicalDocumentState = .ready
+        default:
+            return
+        }
+    }
+    
+    private func changeValue(_ newValue: StepIntent){
+        switch newValue{
+        case .modifiedIngredients(_):
+            stepVM.stepState = .ready
         default:
             return
         }

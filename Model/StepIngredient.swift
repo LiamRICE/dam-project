@@ -7,7 +7,11 @@
 
 import Foundation
 
-public class StepIngredient{
+public class StepIngredient: Equatable{
+    public static func == (lhs: StepIngredient, rhs: StepIngredient) -> Bool {
+        return lhs.code == rhs.code
+    }
+    
     var code: Int
     var libelle: String
     var quantity: Double
@@ -22,5 +26,9 @@ public class StepIngredient{
         self.unit = unit
         self.unitprice = unitprice
         self.allergene = allergene
+    }
+    
+    public func isEqual(_ other: StepIngredient) -> Bool{
+        return self.code == other.code && self.libelle == other.libelle && self.quantity == other.quantity && self.unit == other.unit && self.unitprice == other.unitprice && self.allergene == other.allergene
     }
 }

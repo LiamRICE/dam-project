@@ -12,4 +12,10 @@ public class IngredientInStepDTO: Codable{
     var stepid: Int
     var ingredientcode: Int
     var quantity: Double
+    
+    init(id: Int, code: Int, quantity: Double){
+        self.stepid = id
+        self.ingredientcode = code
+        self.quantity = quantity
+    }
 }

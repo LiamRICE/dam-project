@@ -30,7 +30,6 @@ struct TechdocView: View {
                     VStack{
                         Text("\(step.title)")
                         Text("\(step.description)")
-                        Text("Length = \(step.ingredients.count)")
                         if(step.ingredients.count>0){Text("Ingrédients:")}
                         ForEach(step.ingredients, id: \.code){ingredient in
                             VStack{
@@ -60,7 +59,7 @@ struct TechdocView: View {
     
     private func changeValue(_ newValue: TechnicalDocumentIntent){
         switch newValue{
-        case .editedTechnicalDocument(_):
+        case .editedTechnicalDocument(_), .cancelledTechnicalDocumentModifications:
             technicalDocumentVM.technicalDocumentState = .ready
         default:
             return

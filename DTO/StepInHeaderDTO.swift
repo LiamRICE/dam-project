@@ -12,4 +12,10 @@ public class StepInHeaderDTO: Codable{
     var docid: Int
     var stepid: Int
     var rank: Int
+    
+    init(doc: Int, step: Int, rk: Int){
+        self.docid = doc
+        self.stepid = step
+        self.rank = rk
+    }
 }

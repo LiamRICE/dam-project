@@ -96,10 +96,73 @@ public class DataDAO{
         return docList
     }
     
-    static func putTechnicalDoc(doc: TechnicalDocument) async {
-        print(doc.name)
-        if let encoded = try? JSONEncoder().encode(TechnicalDocumentDTO.translate(techdoc: doc)){
-            if let url = URL(string: "https://awi-backend.herokuapp.com/technicaldoc/put/\(doc.id)"){
+    static func putTechnicalDocHeader(doc: TechnicalDocument) async {
+        let header = TechnicalDocumentHeaderDTO(id: doc.id, name: doc.name, head: doc.header, auth: doc.author, resp: doc.responsable, cat: doc.category, def: doc.byDefault, charges: doc.usesCharges, served: doc.nbServed, ass: doc.assaisonnemments)
+        if let encoded = try? JSONEncoder().encode(header){
+            if let url = URL(string: "https://awi-backend.herokuapp.com/technicaldoc/put/header"){
+                do{
+                    var request = URLRequest(url: url)
+                    request.httpMethod = "PUT"
+                    request.httpBody = encoded
+                    request.addValue("application/json", forHTTPHeaderField: "content-type")
+                    if let (_, response) = try? await URLSession.shared.data(for: request){
+                        let httpresponse = response as! HTTPURLResponse
+                        if(httpresponse.statusCode==200){
+                            print("done")
+                        }else{
+                            print("Error \(httpresponse.statusCode): \(HTTPURLResponse.localizedString(forStatusCode: httpresponse.statusCode))")
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    static func putTechnicalDocStep(doc: TechnicalDocument, step: Step) async {
+        let stepdto = TechnicalDocumentStepDTO(id: step.id, title: step.title, desc: step.description, time: step.time)
+        if let encoded = try? JSONEncoder().encode(stepdto){
+            if let url = URL(string: "https://awi-backend.herokuapp.com/technicaldoc/put/step"){
+                do{
+                    var request = URLRequest(url: url)
+                    request.httpMethod = "PUT"
+                    request.httpBody = encoded
+                    request.addValue("application/json", forHTTPHeaderField: "content-type")
+                    if let (_, response) = try? await URLSession.shared.data(for: request){
+                        let httpresponse = response as! HTTPURLResponse
+                        if(httpresponse.statusCode==200){
+                            print("done")
+                        }else{
+                            print("Error \(httpresponse.statusCode): \(HTTPURLResponse.localizedString(forStatusCode: httpresponse.statusCode))")
+                        }
+                    }
+                }
+            }
+        }
+        let stepinheader = StepInHeaderDTO(doc: doc.id, step: step.id, rk: step.rank)
+        if let encoded = try? JSONEncoder().encode(stepinheader){
+            if let url = URL(string: "https://awi-backend.herokuapp.com/technicaldoc/put/stepinheader"){
+                do{
+                    var request = URLRequest(url: url)
+                    request.httpMethod = "PUT"
+                    request.httpBody = encoded
+                    request.addValue("application/json", forHTTPHeaderField: "content-type")
+                    if let (_, response) = try? await URLSession.shared.data(for: request){
+                        let httpresponse = response as! HTTPURLResponse
+                        if(httpresponse.statusCode==200){
+                            print("done")
+                        }else{
+                            print("Error \(httpresponse.statusCode): \(HTTPURLResponse.localizedString(forStatusCode: httpresponse.statusCode))")
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    static func putTechnicalDocIngredientInStep(step: Step, ingredient: StepIngredient) async {
+        let ingredientinstep = IngredientInStepDTO(id: step.id, code: ingredient.code, quantity: ingredient.quantity)
+        if let encoded = try? JSONEncoder().encode(ingredientinstep){
+            if let url = URL(string: "https://awi-backend.herokuapp.com/technicaldoc/put/ingredientinstep"){
                 do{
                     var request = URLRequest(url: url)
                     request.httpMethod = "PUT"

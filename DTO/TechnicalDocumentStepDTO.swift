@@ -14,6 +14,14 @@ public class TechnicalDocumentStepDTO: Codable{
     var title: String
     var description: String
     var time: Int
+    
+    init(id: Int, title: String, desc: String, time: Int){
+        self.id = id
+        self.stepid = id
+        self.title = title
+        self.description = desc
+        self.time = time
+    }
 
     enum CodingKeys: String, CodingKey{
         case id = "id"
