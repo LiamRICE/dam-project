@@ -64,6 +64,8 @@ public class TechnicalDocumentVM: ObservableObject{
                     i1, i2 in return i1.rank < i2.rank
                 })
                 self.technicalDocumentState = .cancelledTechnicalDocumentModifications
+            case .addingTechnicalDocument(let doc):
+                self.technicalDocumentState = .addedTechnicalDocument(doc)
             default:
                 return
             }

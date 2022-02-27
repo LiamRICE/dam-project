@@ -28,9 +28,11 @@ struct TechdocListView: View {
     */
     var body: some View {
         VStack{
-            NavigationLink(destination: AddIngredientView()){
+            NavigationLink(destination: AddTechdocView()){
                 Text("Ajouter une fiche")
-            }
+            }.onAppear(perform: {
+                technicalDocumentVM.setTechnicalDocument(doc: TechnicalDocument())
+            })
             List{
                 ForEach(technicalDocumentListVM.techdocs, id: \.id){
                     document in NavigationLink(destination: TechdocView().onAppear(perform: {

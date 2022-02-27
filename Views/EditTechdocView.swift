@@ -40,7 +40,12 @@ struct EditTechdocView: View {
                 }
             }
             // Steps
-            Text("Etapes")
+            LazyVGrid(columns: cols, alignment: .leading){
+                Text("Etapes")
+                NavigationLink(destination: AddStepToTechdocView(), label: {
+                    Text("Ajouter une étape")
+                })
+            }
             List{
                 ForEach($technicalDocumentVM.steps, id: \.id){$step in
                     VStack{

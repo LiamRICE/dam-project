@@ -21,6 +21,9 @@ struct StepIngredientSheetView: View {
     
     var body: some View {
         VStack{
+            NavigationLink(destination: AddIngredientToStepView(), label: {
+                Text("Ajouter un ingrédient")
+            })
             ForEach($stepVM.ingredients, id: \.code){$ingredient in
                 LazyVGrid(columns: cols,alignment: .leading){
                     Text("Nom: ")

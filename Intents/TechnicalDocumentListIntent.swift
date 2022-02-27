@@ -13,6 +13,7 @@ public enum TechnicalDocumentListIntent: Equatable{
     case changedTechnicalDocumentList
     case addingTechnicalDocument(TechnicalDocument)
     case addedTechnicalDocument(TechnicalDocument)
+    case addTechnicalDocumentError(AddTechnicalDocumentError)
     
     mutating func intentToChange(){
         self = .changingTechnicalDocumentList

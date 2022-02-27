@@ -14,13 +14,23 @@ public class TechnicalDocumentListVM: ObservableObject{
         didSet{
             switch self.technicalDocumentListState{
             case .addingTechnicalDocument(let document):
-                // post techdoc
-                self.techdocs.append(document)
-                self.techdocs.sort(by: {
-                    i1, i2 in return i1.id < i2.id
-                })
-                self.model = self.techdocs
-                self.technicalDocumentListState = .addedTechnicalDocument(document)
+                var isUsed = false
+                for doc in model{
+                    if doc == document{
+                        isUsed = true
+                    }
+                }
+                if !isUsed{
+                    Task {await DataDAO.postTechnicalDocHeader(doc: document)}
+                    self.techdocs.append(document)
+                    self.techdocs.sort(by: {
+                        i1, i2 in return i1.id < i2.id
+                    })
+                    self.model = self.techdocs
+                    self.technicalDocumentListState = .addedTechnicalDocument(document)
+                }else{
+                    self.technicalDocumentListState = .addTechnicalDocumentError(.duplicateError)
+                }
             case .changingTechnicalDocumentList:
                 self.techdocs.sort(by: {
                     i1, i2 in return i1.id < i2.id

@@ -180,4 +180,26 @@ public class DataDAO{
             }
         }
     }
+    
+    static func postTechnicalDocHeader(doc: TechnicalDocument) async {
+        let header = TechnicalDocumentHeaderDTO(id: doc.id, name: doc.name, head: doc.header, auth: doc.author, resp: doc.responsable, cat: doc.category, def: doc.byDefault, charges: doc.usesCharges, served: doc.nbServed, ass: doc.assaisonnemments)
+        if let encoded = try? JSONEncoder().encode(header){
+            if let url = URL(string: "https://awi-backend.herokuapp.com/technicaldoc/post/header"){
+                do{
+                    var request = URLRequest(url: url)
+                    request.httpMethod = "POST"
+                    request.httpBody = encoded
+                    request.addValue("application/json", forHTTPHeaderField: "content-type")
+                    if let (_, response) = try? await URLSession.shared.data(for: request){
+                        let httpresponse = response as! HTTPURLResponse
+                        if(httpresponse.statusCode==200){
+                            print("done")
+                        }else{
+                            print("Error \(httpresponse.statusCode): \(HTTPURLResponse.localizedString(forStatusCode: httpresponse.statusCode))")
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
