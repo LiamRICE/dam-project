@@ -16,7 +16,8 @@ struct EditTechdocView: View {
     }()
     
     @EnvironmentObject var technicalDocumentVM: TechnicalDocumentVM
-    @StateObject var stepVM: StepVM = StepVM()
+    @EnvironmentObject var stepVM: StepVM
+    @EnvironmentObject var stepIngredientVM: StepIngredientVM
     
     var body: some View {
         VStack{
@@ -42,41 +43,39 @@ struct EditTechdocView: View {
             // Steps
             LazyVGrid(columns: cols, alignment: .leading){
                 Text("Etapes")
-                NavigationLink(destination: AddStepToTechdocView(), label: {
+                NavigationLink(destination: AddStepToTechdocView().onAppear(perform: {
+                    stepVM.setStep(step: Step())
+                }), label: {
                     Text("Ajouter une étape")
                 })
             }
             List{
                 ForEach($technicalDocumentVM.steps, id: \.id){$step in
                     VStack{
-                        Button("Up"){
-                            technicalDocumentVM.decreaseStepRank(step: step)
-                        }
-                        Button("Down"){
-                            technicalDocumentVM.increaseStepRank(step: step)
-                        }
                         LazyVGrid(columns: cols,alignment: .leading){
                             Text("Titre: ")
                             TextField("",text:$step.title)
-                        }
-                        VStack{
                             Text("Description: ")
                             TextField("",text:$step.description)
+                            Text("Ordre:")
+                            TextField("Ordre: ",value: $step.rank,formatter:formatter)
                         }
-                        if($step.ingredients.count>0){Button("Ingrédients:"){
+                        NavigationLink(destination: StepIngredientSheetView().onAppear(){
                             stepVM.setStep(step: step)
-                            stepVM.showingSheet.toggle()
-                        }
-                        .sheet(isPresented: $stepVM.showingSheet){StepIngredientSheetView(sVM: stepVM)}
-                        }
+                        }, label:{
+                            Text("Ingredients")
+                        })
                     }
                 }
             }
             // Footer
             LazyVGrid(columns:cols, alignment:.leading){
                 Text("Cacher les couts:")
+                Text("PLACEHOLDER")
                 Text("Utiliser paramètres du système:")
+                Text("PLACEHOLDER")
                 Text("Utiliser charges:")
+                Text("PLACEHOLDER")
             }
             HStack{
                 Button("Modifier"){
@@ -86,14 +85,6 @@ struct EditTechdocView: View {
                 Button("Annuler"){
                     // TODO - reset modifications
                     technicalDocumentVM.technicalDocumentState.intentToChange(cancel: true)
-                }
-            }
-            HStack{
-                Button("Ajouter un étape"){
-                    // TODO - add a step
-                }
-                Button("Ajouter un ingrédient"){
-                    // TODO - add an ingredient
                 }
             }
         }
@@ -107,7 +98,7 @@ struct EditTechdocView: View {
     
     private func changeValue(_ newValue: TechnicalDocumentIntent){
         switch newValue{
-        case .editedTechnicalDocument(_), .cancelledTechnicalDocumentModifications:
+        case .editedTechnicalDocument(_), .cancelledTechnicalDocumentModifications, .addedStepToDocument(_):
             technicalDocumentVM.technicalDocumentState = .ready
         default:
             return
@@ -116,7 +107,7 @@ struct EditTechdocView: View {
     
     private func changeValue(_ newValue: StepIntent){
         switch newValue{
-        case .modifiedIngredients(_):
+        case .addedStep(_):
             stepVM.stepState = .ready
         default:
             return

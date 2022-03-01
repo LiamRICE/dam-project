@@ -28,6 +28,15 @@ public class StepIngredient: Equatable{
         self.allergene = allergene
     }
     
+    init(){
+        self.code = 0
+        self.libelle = "libellé"
+        self.quantity = 0
+        self.unit = "unité"
+        self.unitprice = 0
+        self.allergene = false
+    }
+    
     public func isEqual(_ other: StepIngredient) -> Bool{
         return self.code == other.code && self.libelle == other.libelle && self.quantity == other.quantity && self.unit == other.unit && self.unitprice == other.unitprice && self.allergene == other.allergene
     }

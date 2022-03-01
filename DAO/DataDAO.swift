@@ -202,4 +202,67 @@ public class DataDAO{
             }
         }
     }
+    
+    static func postTechnicalDocStep(doc: TechnicalDocument, step: Step) async {
+        let stepdto = TechnicalDocumentStepDTO(id: step.id, title: step.title, desc: step.description, time: step.time)
+        if let encoded = try? JSONEncoder().encode(stepdto){
+            if let url = URL(string: "https://awi-backend.herokuapp.com/technicaldoc/post/step"){
+                do{
+                    var request = URLRequest(url: url)
+                    request.httpMethod = "POST"
+                    request.httpBody = encoded
+                    request.addValue("application/json", forHTTPHeaderField: "content-type")
+                    if let (_, response) = try? await URLSession.shared.data(for: request){
+                        let httpresponse = response as! HTTPURLResponse
+                        if(httpresponse.statusCode==200){
+                            print("done")
+                        }else{
+                            print("Error \(httpresponse.statusCode): \(HTTPURLResponse.localizedString(forStatusCode: httpresponse.statusCode))")
+                        }
+                    }
+                }
+            }
+        }
+        let stepinheader = StepInHeaderDTO(doc: doc.id, step: step.id, rk: step.rank)
+        if let encoded = try? JSONEncoder().encode(stepinheader){
+            if let url = URL(string: "https://awi-backend.herokuapp.com/technicaldoc/post/stepinheader"){
+                do{
+                    var request = URLRequest(url: url)
+                    request.httpMethod = "POST"
+                    request.httpBody = encoded
+                    request.addValue("application/json", forHTTPHeaderField: "content-type")
+                    if let (_, response) = try? await URLSession.shared.data(for: request){
+                        let httpresponse = response as! HTTPURLResponse
+                        if(httpresponse.statusCode==200){
+                            print("done")
+                        }else{
+                            print("Error \(httpresponse.statusCode): \(HTTPURLResponse.localizedString(forStatusCode: httpresponse.statusCode))")
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    static func postTechnicalDocIngredientInStep(step: Step, ingredient: StepIngredient) async {
+        let ingredientinstep = IngredientInStepDTO(id: step.id, code: ingredient.code, quantity: ingredient.quantity)
+        if let encoded = try? JSONEncoder().encode(ingredientinstep){
+            if let url = URL(string: "https://awi-backend.herokuapp.com/technicaldoc/post/ingredientinstep"){
+                do{
+                    var request = URLRequest(url: url)
+                    request.httpMethod = "POST"
+                    request.httpBody = encoded
+                    request.addValue("application/json", forHTTPHeaderField: "content-type")
+                    if let (_, response) = try? await URLSession.shared.data(for: request){
+                        let httpresponse = response as! HTTPURLResponse
+                        if(httpresponse.statusCode==200){
+                            print("done")
+                        }else{
+                            print("Error \(httpresponse.statusCode): \(HTTPURLResponse.localizedString(forStatusCode: httpresponse.statusCode))")
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

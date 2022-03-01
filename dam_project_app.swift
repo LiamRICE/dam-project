@@ -14,6 +14,8 @@ struct dam_project_app: App {
     @StateObject var technicalDocumentListVM: TechnicalDocumentListVM = TechnicalDocumentListVM()
     @StateObject var ingredientVM: IngredientVM = IngredientVM()
     @StateObject var technicalDocumentVM: TechnicalDocumentVM = TechnicalDocumentVM()
+    @StateObject var stepVM: StepVM = StepVM()
+    @StateObject var stepIngredientVM: StepIngredientVM = StepIngredientVM()
     
     var body: some Scene {
         WindowGroup {
@@ -22,6 +24,8 @@ struct dam_project_app: App {
                 .environmentObject(ingredientVM)
                 .environmentObject(technicalDocumentListVM)
                 .environmentObject(technicalDocumentVM)
+                .environmentObject(stepIngredientVM)
+                .environmentObject(stepVM)
                 .task {
                     print("loading data...")
                     await ingredientListVM.loadModel()

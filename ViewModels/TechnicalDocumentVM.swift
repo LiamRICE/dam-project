@@ -66,6 +66,13 @@ public class TechnicalDocumentVM: ObservableObject{
                 self.technicalDocumentState = .cancelledTechnicalDocumentModifications
             case .addingTechnicalDocument(let doc):
                 self.technicalDocumentState = .addedTechnicalDocument(doc)
+            case .addingStepToDocument(let step):
+                Task{
+                    await DataDAO.postTechnicalDocStep(doc: self.model, step: step)
+                }
+                self.steps.append(step)
+                self.model.steps = self.steps
+                self.technicalDocumentState = .addedStepToDocument(step)
             default:
                 return
             }

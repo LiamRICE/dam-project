@@ -15,6 +15,8 @@ public enum TechnicalDocumentIntent: Equatable{
     case cancelledTechnicalDocumentModifications
     case addingTechnicalDocument(TechnicalDocument)
     case addedTechnicalDocument(TechnicalDocument)
+    case addingStepToDocument(Step)
+    case addedStepToDocument(Step)
     
     mutating func intentToChange(document: TechnicalDocument){
         self = .editingTechnicalDocument(document)
@@ -26,5 +28,9 @@ public enum TechnicalDocumentIntent: Equatable{
     
     mutating func intentToChange(adding: TechnicalDocument){
         self = .addingTechnicalDocument(adding)
+    }
+    
+    mutating func intentToChange(adding: Step){
+        self = .addingStepToDocument(adding)
     }
 }

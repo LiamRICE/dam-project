@@ -17,10 +17,11 @@ struct StepIngredientSheetView: View {
     
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var technicalDocumentVM: TechnicalDocumentVM
-    @ObservedObject var stepVM: StepVM
+    @EnvironmentObject var stepVM: StepVM
     
     var body: some View {
         VStack{
+            Text(stepVM.title)
             NavigationLink(destination: AddIngredientToStepView(), label: {
                 Text("Ajouter un ingrédient")
             })
@@ -37,23 +38,28 @@ struct StepIngredientSheetView: View {
             }
             HStack{
                 Button("Enregistrer"){
-                    for s in technicalDocumentVM.steps{
-                        if(stepVM.stepIsEqual(s)){
-                            s.ingredients = stepVM.ingredients
-                        }
+                    for i in stepVM.ingredients{
+                        print("\(i.libelle) : \(i.quantity)")
                     }
                     stepVM.stepState.intentToChange(ingredients: stepVM.ingredients)
-                    dismiss()
                 }
                 Button("Annuler"){
                     dismiss()
                 }
             }
         }
+        .onChange(of: stepVM.stepState, perform: {
+            newValue in valueChanged(newValue)
+        })
     }
     
-    init(sVM: StepVM){
-        self.stepVM = sVM
+    private func valueChanged(_ newValue: StepIntent){
+        switch newValue{
+        case .addedIngredient(_), .modifiedIngredients(_):
+            stepVM.stepState = .ready
+        default:
+            return
+        }
     }
 }
 /*
