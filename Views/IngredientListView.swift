@@ -8,13 +8,14 @@
 import SwiftUI
 
 struct IngredientListView: View {
+    var cols = [GridItem(.flexible()), GridItem(.flexible())]
     
     @EnvironmentObject var ingredientListVM : IngredientListVM
     @EnvironmentObject var ingredientVM: IngredientVM
     
     private func stateChanged(_ newValue: IngredientListIntent){
         switch newValue {
-        case .changedIngredientList:
+        case .changedIngredientList, .searchedIngredientList(_):
             ingredientListVM.ingredientListState = .ready
             print("List State : ready")
         default:
@@ -22,17 +23,27 @@ struct IngredientListView: View {
         }
     }
     
-    private func searchList(search: String) -> [Ingredient]{
-        return ingredientListVM.subset(searchValue: search)
-    }
-    
     var body: some View {
         VStack{
             NavigationLink(destination: AddIngredientView()){
                 Text("Ajouter un ingrédient")
             }
-            TextField("search", text: $ingredientListVM.search).onSubmit {
-                ingredientListVM.ingredientList = searchList(search: ingredientListVM.search)
+            LazyVGrid(columns:cols, alignment:.leading){
+                Picker("Catégorie", selection: $ingredientListVM.category){
+                    Text("Tous").tag(-1)
+                    Text("Viandes / Volailles").tag(0)
+                    Text("Poisson et Crustacés").tag(1)
+                    Text("Crèmerie").tag(2)
+                    Text("Fruits et Légumes").tag(3)
+                    Text("Epicerie").tag(4)
+                }
+                TextField("search", text: $ingredientListVM.regex)
+            }
+            Button("Chercher"){
+                var searchObject = IngredientListSearch()
+                searchObject.setCategory(cat: ingredientListVM.category)
+                searchObject.setSearch(search: ingredientListVM.regex)
+                ingredientListVM.ingredientListState.intentToChange(search: searchObject)
             }
             List{
                 ForEach(ingredientListVM.ingredientList, id: \.code){
@@ -43,7 +54,8 @@ struct IngredientListView: View {
                     }
                 }
             }
-        }.onChange(of: ingredientListVM.ingredientListState, perform: {
+        }
+        .onChange(of: ingredientListVM.ingredientListState, perform: {
             newValue in stateChanged(newValue)
         })
     }

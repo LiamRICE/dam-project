@@ -68,14 +68,10 @@ struct EditTechdocView: View {
                     }
                 }
             }
-            // Footer
-            LazyVGrid(columns:cols, alignment:.leading){
-                Text("Cacher les couts:")
-                Text("PLACEHOLDER")
-                Text("Utiliser paramètres du système:")
-                Text("PLACEHOLDER")
-                Text("Utiliser charges:")
-                Text("PLACEHOLDER")
+            VStack(alignment:.leading){
+                Toggle("Cacher les couts:", isOn:$technicalDocumentVM.hideCosts)
+                Toggle("Utiliser paramètres du système:", isOn:$technicalDocumentVM.byDefault)
+                Toggle("Utiliser charges:", isOn:$technicalDocumentVM.usesCharges).disabled(!technicalDocumentVM.byDefault)
             }
             HStack{
                 Button("Modifier"){

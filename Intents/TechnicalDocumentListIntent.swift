@@ -14,6 +14,8 @@ public enum TechnicalDocumentListIntent: Equatable{
     case addingTechnicalDocument(TechnicalDocument)
     case addedTechnicalDocument(TechnicalDocument)
     case addTechnicalDocumentError(AddTechnicalDocumentError)
+    case searchingTechnicalDocumentList(TechnicalDocumentListSearch)
+    case searchedTechnicalDocumentList(TechnicalDocumentListSearch)
     
     mutating func intentToChange(){
         self = .changingTechnicalDocumentList
@@ -21,5 +23,9 @@ public enum TechnicalDocumentListIntent: Equatable{
     
     mutating func intentToChange(adding: TechnicalDocument){
         self = .addingTechnicalDocument(adding)
+    }
+    
+    mutating func intentToChange(search: TechnicalDocumentListSearch){
+        self = .searchingTechnicalDocumentList(search)
     }
 }

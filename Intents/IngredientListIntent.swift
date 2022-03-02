@@ -13,6 +13,8 @@ public enum IngredientListIntent: Equatable{
     case changedIngredientList
     case addingIngredient(Ingredient)
     case addedIngredient(Ingredient)
+    case searchingIngredientList(IngredientListSearch)
+    case searchedIngredientList(IngredientListSearch)
     
     mutating func intentToChange(){
         self = .changingIngredientList
@@ -21,5 +23,9 @@ public enum IngredientListIntent: Equatable{
     
     mutating func intentToChange(adding: Ingredient){
         self = .addingIngredient(adding)
+    }
+    
+    mutating func intentToChange(search: IngredientListSearch){
+        self = .searchingIngredientList(search)
     }
 }

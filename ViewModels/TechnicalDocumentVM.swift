@@ -20,6 +20,7 @@ public class TechnicalDocumentVM: ObservableObject{
     @Published var usesCharges: Bool
     @Published var assaisonnemments: Double
     @Published var steps: [Step]
+    @Published var hideCosts: Bool
     @Published var technicalDocumentState: TechnicalDocumentIntent = .ready{
         didSet{
             switch self.technicalDocumentState{
@@ -92,6 +93,7 @@ public class TechnicalDocumentVM: ObservableObject{
         self.usesCharges = true
         self.assaisonnemments = 0
         self.steps = []
+        self.hideCosts = true
     }
     
     public func setTechnicalDocument(doc: TechnicalDocument){

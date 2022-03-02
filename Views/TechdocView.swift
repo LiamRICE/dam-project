@@ -40,11 +40,8 @@ struct TechdocView: View {
                     }
                 }
             }
-            // Footer
             LazyVGrid(columns:cols, alignment:.leading){
-                Text("Cacher les couts:")
-                Text("Utiliser paramètres du système:")
-                Text("Utiliser charges:")
+                Toggle("Cacher les couts:", isOn:$technicalDocumentVM.hideCosts)
             }
             HStack{
                 NavigationLink(destination: EditTechdocView()){

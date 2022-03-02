@@ -16,13 +16,12 @@ struct AddStepToTechdocView: View {
     }()
     
     @EnvironmentObject var technicalDocumentVM: TechnicalDocumentVM
+    @EnvironmentObject var technicalDocumentListVM: TechnicalDocumentListVM
     @EnvironmentObject var stepVM: StepVM
     
     var body: some View {
         VStack{
             LazyVGrid(columns: cols,alignment: .leading){
-                Text("ID: ")
-                TextField("Identifiant: ",value: $stepVM.id, formatter: formatter)
                 Text("Titre: ")
                 TextField("",text:$stepVM.title)
                 Text("Description: ")
@@ -34,8 +33,8 @@ struct AddStepToTechdocView: View {
             }
             HStack{
                 Button("Ajouter"){
-                    // TODO - confirm modifications
-                    stepVM.stepState.intentToChange(adding: Step(id: stepVM.id, title: stepVM.title, desc: stepVM.description, time: stepVM.time, rk: stepVM.rank, ingredients: []))
+                    stepVM.id = technicalDocumentListVM.getUnusedStepId()
+                    stepVM.stepState.intentToChange(adding: Step(id: technicalDocumentListVM.getUnusedStepId(), title: stepVM.title, desc: stepVM.description, time: stepVM.time, rk: stepVM.rank, ingredients: []))
                 }
                 Button("Annuler"){
                     // TODO - reset modifications

@@ -8,24 +8,20 @@
 import SwiftUI
 
 struct TechdocListView: View {
+    var cols = [GridItem(.flexible()), GridItem(.flexible())]
     
     @EnvironmentObject var technicalDocumentListVM: TechnicalDocumentListVM
     @EnvironmentObject var technicalDocumentVM: TechnicalDocumentVM
-    /*
-    private func stateChanged(_ newValue: IngredientListIntent){
+    
+    private func stateChanged(_ newValue: TechnicalDocumentListIntent){
         switch newValue {
-        case .changedIngredientList:
-            ingredientListVM.ingredientListState = .ready
-            print("List State : ready")
+        case .searchedTechnicalDocumentList(_):
+            technicalDocumentListVM.technicalDocumentListState = .ready
         default:
             return
         }
     }
     
-    private func searchList(search: String) -> [Ingredient]{
-        return ingredientListVM.subset(searchValue: search)
-    }
-    */
     var body: some View {
         VStack{
             NavigationLink(destination: AddTechdocView()){
@@ -33,6 +29,20 @@ struct TechdocListView: View {
             }.onAppear(perform: {
                 technicalDocumentVM.setTechnicalDocument(doc: TechnicalDocument())
             })
+            LazyVGrid(columns:cols, alignment:.leading){
+                Picker("Catégorie", selection: $technicalDocumentListVM.category){
+                    ForEach(technicalDocumentListVM.getCategories(), id:\.self){ category in
+                        Text(category).tag(category)
+                    }
+                }
+                TextField("search", text: $technicalDocumentListVM.regex)
+            }
+            Button("Chercher"){
+                var searchObject = TechnicalDocumentListSearch()
+                searchObject.setCategory(cat: technicalDocumentListVM.category)
+                searchObject.setSearch(search: technicalDocumentListVM.regex)
+                technicalDocumentListVM.technicalDocumentListState.intentToChange(search: searchObject)
+            }
             List{
                 ForEach(technicalDocumentListVM.techdocs, id: \.id){
                     document in NavigationLink(destination: TechdocView().onAppear(perform: {
@@ -42,9 +52,9 @@ struct TechdocListView: View {
                     }
                 }
             }
-        }/*.onChange(of: technicalDocumentListVM, perform: {
+        }.onChange(of: technicalDocumentListVM.technicalDocumentListState, perform: {
             newValue in stateChanged(newValue)
-        })*/
+        })
     }
 }
 

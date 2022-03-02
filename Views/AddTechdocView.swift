@@ -23,8 +23,6 @@ struct AddTechdocView: View {
             // Header
             LazyVGrid(columns: cols,alignment: .leading){
                 Group{
-                    Text("ID: ")
-                    TextField("Identifiant: ",value: $technicalDocumentVM.id, formatter: formatter)
                     Text("Intitulé: ")
                     TextField("Intitulé: ",text: $technicalDocumentVM.name)
                     Text("Responsable: ")
@@ -45,11 +43,10 @@ struct AddTechdocView: View {
             }
             HStack{
                 Button("Ajouter"){
-                    // TODO - confirm modifications
-                    technicalDocumentVM.technicalDocumentState.intentToChange(adding: TechnicalDocument(id: technicalDocumentVM.id, name: technicalDocumentVM.name, header: technicalDocumentVM.header, author: technicalDocumentVM.author, respo: technicalDocumentVM.responsable, cat: technicalDocumentVM.category, nbServed: technicalDocumentVM.nbServed, def: true, charges: false, ass: technicalDocumentVM.assaisonnemments, steps: []))
+                    technicalDocumentVM.id = technicalDocumentListVM.getUnusedId()
+                    technicalDocumentVM.technicalDocumentState.intentToChange(adding: TechnicalDocument(id: technicalDocumentListVM.getUnusedId(), name: technicalDocumentVM.name, header: technicalDocumentVM.header, author: technicalDocumentVM.author, respo: technicalDocumentVM.responsable, cat: technicalDocumentVM.category, nbServed: technicalDocumentVM.nbServed, def: true, charges: false, ass: technicalDocumentVM.assaisonnemments, steps: []))
                 }
                 Button("Annuler"){
-                    // TODO - reset modifications
                     technicalDocumentVM.technicalDocumentState.intentToChange(cancel: true)
                 }
             }
