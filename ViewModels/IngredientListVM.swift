@@ -34,6 +34,15 @@ public class IngredientListVM: ObservableObject{
             case .searchingIngredientList(let listSearch):
                 self.ingredientList = listSearch.searchIngredients(ingredients: self.model.ingredientList)
                 self.ingredientListState = .searchedIngredientList(listSearch)
+            case .deletingIngredient(let ingredient):
+                if let index = self.ingredientList.firstIndex(of: ingredient){
+                    Task{await DataDAO.deleteIngredient(ingredient: ingredient)}
+                    self.ingredientList.remove(at: index)
+                    self.model.ingredientList = self.ingredientList
+                    self.ingredientListState = .deletedIngredient(ingredient)
+                } else {
+                    self.ingredientListState = .deleteIngredientError
+                }
             default:
                 return
             }
@@ -57,9 +66,11 @@ public class IngredientListVM: ObservableObject{
         return ret
     }
     
-    public func loadModel() async {
-        await self.model.loadData()
-        self.ingredientList = self.model.ingredientList
+    public func loadModel() {
+        Task{
+            await self.model.loadData()
+            self.ingredientList = self.model.ingredientList
+        }
     }
     
     func getUnusedCode() -> Int{

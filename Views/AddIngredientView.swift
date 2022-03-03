@@ -17,6 +17,7 @@ struct AddIngredientView: View {
     
     @EnvironmentObject var ingredientListVM: IngredientListVM
     @EnvironmentObject var ingredientVM: IngredientVM
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         VStack{
@@ -41,6 +42,10 @@ struct AddIngredientView: View {
             HStack{
                 Button("Ajouter"){
                     ingredientListVM.ingredientListState.intentToChange(adding: Ingredient(code: ingredientVM.code, libelle: ingredientVM.libelle, unit: ingredientVM.unit, unitprice: ingredientVM.unitPrice, stocks: ingredientVM.stocks, stockvalue: ingredientVM.stockValue, allergene: ingredientVM.allergen))
+                    self.presentationMode.wrappedValue.dismiss()
+                }
+                Button("Annuler"){
+                    self.presentationMode.wrappedValue.dismiss()
                 }
             }
         }

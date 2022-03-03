@@ -12,6 +12,8 @@ struct IngredientView: View {
     
     @EnvironmentObject var ingredientListVM: IngredientListVM
     @EnvironmentObject var ingredientVM: IngredientVM
+    @Environment(\.presentationMode) var presentationMode
+    @State var showingDeleteConfirm: Bool = false
     
     var body: some View {
         VStack{
@@ -36,6 +38,21 @@ struct IngredientView: View {
             HStack{
                 Button("Enregistrer"){
                     self.ingredientVM.ingredientState.intentToChange(modifying: Ingredient(code: ingredientVM.code, libelle: ingredientVM.libelle, unit: ingredientVM.unit, unitprice: ingredientVM.unitPrice, stocks: ingredientVM.stocks, stockvalue: ingredientVM.stockValue, allergene: ingredientVM.allergen))
+                }
+                Button("Annuler"){
+                    // cancel
+                }
+                Button("Supprimer"){
+                    showingDeleteConfirm.toggle()
+                }
+                .alert("Êtes-vous sûr de supprimer cet ingrédient?", isPresented: $showingDeleteConfirm){
+                    Button("Oui", role: .destructive){
+                        ingredientListVM.ingredientListState.intentToChange(delete: self.ingredientVM.getIngredientReference())
+                        self.presentationMode.wrappedValue.dismiss()
+                    }
+                    Button("Non", role: .cancel){
+                        // does nothing
+                    }
                 }
             }
         }

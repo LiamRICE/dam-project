@@ -18,6 +18,7 @@ struct AddStepToTechdocView: View {
     @EnvironmentObject var technicalDocumentVM: TechnicalDocumentVM
     @EnvironmentObject var technicalDocumentListVM: TechnicalDocumentListVM
     @EnvironmentObject var stepVM: StepVM
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         VStack{
@@ -35,10 +36,12 @@ struct AddStepToTechdocView: View {
                 Button("Ajouter"){
                     stepVM.id = technicalDocumentListVM.getUnusedStepId()
                     stepVM.stepState.intentToChange(adding: Step(id: technicalDocumentListVM.getUnusedStepId(), title: stepVM.title, desc: stepVM.description, time: stepVM.time, rk: stepVM.rank, ingredients: []))
+                    self.presentationMode.wrappedValue.dismiss()
                 }
                 Button("Annuler"){
                     // TODO - reset modifications
                     stepVM.stepState.intentToChange(cancel: true)
+                    self.presentationMode.wrappedValue.dismiss()
                 }
             }
         }

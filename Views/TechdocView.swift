@@ -11,6 +11,9 @@ struct TechdocView: View {
     var cols = [GridItem(.flexible()), GridItem(.flexible())]
     
     @EnvironmentObject var technicalDocumentVM: TechnicalDocumentVM
+    @EnvironmentObject var technicalDocumentListVM: TechnicalDocumentListVM
+    @Environment(\.presentationMode) var presentationMode
+    @State var showingDeleteConfirm: Bool = false
     
     var body: some View {
         VStack{
@@ -46,6 +49,18 @@ struct TechdocView: View {
             HStack{
                 NavigationLink(destination: EditTechdocView()){
                     Text("Modifier")
+                }
+                Button("Supprimer"){
+                    showingDeleteConfirm.toggle()
+                }
+                .alert("Êtes-vous sûr de supprimer cette fiche technique?", isPresented: $showingDeleteConfirm){
+                    Button("Oui", role: .destructive){
+                        technicalDocumentListVM.technicalDocumentListState.intentToChange(delete: technicalDocumentVM.getTechnicalDocumentReference())
+                        self.presentationMode.wrappedValue.dismiss()
+                    }
+                    Button("Non", role: .cancel){
+                        // does nothing
+                    }
                 }
             }
         }

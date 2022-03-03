@@ -43,6 +43,13 @@ public class TechnicalDocumentListVM: ObservableObject{
             case .searchingTechnicalDocumentList(let search):
                 self.techdocs = search.searchTechnicalDocuments(techdoc: self.model)
                 self.technicalDocumentListState = .searchedTechnicalDocumentList(search)
+            case .deletingTechnicalDocument(let techdoc):
+                if let index = self.techdocs.firstIndex(of: techdoc){
+                    Task{await DataDAO.deleteTechnicalDocument(document: techdoc)}
+                    self.techdocs.remove(at: index)
+                    self.model = self.techdocs
+                    self.technicalDocumentListState = .deletedTechnicalDocument(techdoc)
+                }
             default:
                 return
             }
@@ -56,9 +63,11 @@ public class TechnicalDocumentListVM: ObservableObject{
         self.regex = ""
     }
     
-    func loadModel() async {
-        self.model = await DataDAO.getTechnicaldocList()
-        self.techdocs = self.model
+    func loadModel() {
+        Task{
+            self.model = await DataDAO.getTechnicaldocList()
+            self.techdocs = self.model
+        }
     }
     
     func getCategories() -> [String]{

@@ -18,6 +18,7 @@ struct EditTechdocView: View {
     @EnvironmentObject var technicalDocumentVM: TechnicalDocumentVM
     @EnvironmentObject var stepVM: StepVM
     @EnvironmentObject var stepIngredientVM: StepIngredientVM
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         VStack{
@@ -75,11 +76,9 @@ struct EditTechdocView: View {
             }
             HStack{
                 Button("Modifier"){
-                    // TODO - confirm modifications
                     technicalDocumentVM.technicalDocumentState.intentToChange(document: TechnicalDocument(id: technicalDocumentVM.id, name: technicalDocumentVM.name, header: technicalDocumentVM.header, author: technicalDocumentVM.author, respo: technicalDocumentVM.responsable, cat: technicalDocumentVM.category, nbServed: technicalDocumentVM.nbServed, def: technicalDocumentVM.byDefault, charges: technicalDocumentVM.usesCharges, ass: technicalDocumentVM.assaisonnemments, steps: technicalDocumentVM.steps))
                 }
                 Button("Annuler"){
-                    // TODO - reset modifications
                     technicalDocumentVM.technicalDocumentState.intentToChange(cancel: true)
                 }
             }

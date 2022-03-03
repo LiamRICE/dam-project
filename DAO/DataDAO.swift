@@ -74,6 +74,25 @@ public class DataDAO{
         }
     }
     
+    static func deleteIngredient(ingredient: Ingredient) async {
+        print(ingredient.libelle)
+        if let url = URL(string: "https://awi-backend.herokuapp.com/ingredient/delete/\(ingredient.code)"){
+            do{
+                var request = URLRequest(url: url)
+                request.httpMethod = "DELETE"
+                request.addValue("application/json", forHTTPHeaderField: "content-type")
+                if let (_, response) = try? await URLSession.shared.data(for: request){
+                    let httpresponse = response as! HTTPURLResponse
+                    if(httpresponse.statusCode==200){
+                        print("done")
+                    }else{
+                        print("Error \(httpresponse.statusCode): \(HTTPURLResponse.localizedString(forStatusCode: httpresponse.statusCode))")
+                    }
+                }
+            }
+        }
+    }
+    
     static func getTechnicaldocList() async -> [TechnicalDocument]{
         var docList: [TechnicalDocument] = []
         if let url = URL(string: "https://awi-backend.herokuapp.com/technicaldoc/get/all"){
@@ -251,6 +270,67 @@ public class DataDAO{
                 do{
                     var request = URLRequest(url: url)
                     request.httpMethod = "POST"
+                    request.httpBody = encoded
+                    request.addValue("application/json", forHTTPHeaderField: "content-type")
+                    if let (_, response) = try? await URLSession.shared.data(for: request){
+                        let httpresponse = response as! HTTPURLResponse
+                        if(httpresponse.statusCode==200){
+                            print("done")
+                        }else{
+                            print("Error \(httpresponse.statusCode): \(HTTPURLResponse.localizedString(forStatusCode: httpresponse.statusCode))")
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    static func deleteTechnicalDocument(document: TechnicalDocument) async {
+        let dto = TechnicalDocumentHeaderDTO(id: document.id, name: document.name, head: document.header, auth: document.author, resp: document.responsable, cat: document.category, def: document.byDefault, charges: document.usesCharges, served: document.nbServed, ass: document.assaisonnemments)
+        if let encoded = try? JSONEncoder().encode(dto){
+            if let url = URL(string: "https://awi-backend.herokuapp.com/technicaldoc/delete"){
+                do{
+                    var request = URLRequest(url: url)
+                    request.httpMethod = "DELETE"
+                    request.httpBody = encoded
+                    request.addValue("application/json", forHTTPHeaderField: "content-type")
+                    if let (_, response) = try? await URLSession.shared.data(for: request){
+                        let httpresponse = response as! HTTPURLResponse
+                        if(httpresponse.statusCode==200){
+                            print("done")
+                        }else{
+                            print("Error \(httpresponse.statusCode): \(HTTPURLResponse.localizedString(forStatusCode: httpresponse.statusCode))")
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    static func getCosts() async -> Costs{
+        var costs: Costs = Costs()
+        if let url = URL(string: "https://awi-backend.herokuapp.com/costs/get"){
+            do{
+                let (data, _) = try await URLSession.shared.data(from: url)
+                let decoder = JSONDecoder()
+                if let decoded = try? decoder.decode(CostsDTO.self, from: data){
+                    costs = CostsDTO.translate(costsdto: decoded)
+                }else{
+                    print("error decoding costs data")
+                }
+            }catch{
+                // print
+            }
+        }
+        return costs
+    }
+    
+    static func putCosts(costs: Costs) async {
+        if let encoded = try? JSONEncoder().encode(CostsDTO.translate(costs: costs)){
+            if let url = URL(string: "https://awi-backend.herokuapp.com/costs/set"){
+                do{
+                    var request = URLRequest(url: url)
+                    request.httpMethod = "PUT"
                     request.httpBody = encoded
                     request.addValue("application/json", forHTTPHeaderField: "content-type")
                     if let (_, response) = try? await URLSession.shared.data(for: request){

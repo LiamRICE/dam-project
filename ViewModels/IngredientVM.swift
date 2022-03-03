@@ -57,4 +57,8 @@ public class IngredientVM: ObservableObject{
         self.stockValue = model.stockValue
         self.allergen = model.allergen
     }
+    
+    public func getIngredientReference() -> Ingredient{
+        return self.model
+    }
 }

@@ -18,10 +18,11 @@ struct AddIngredientToStepView: View {
     @EnvironmentObject var ingredientListVM: IngredientListVM
     @EnvironmentObject var stepVM: StepVM
     @EnvironmentObject var stepIngredientVM: StepIngredientVM
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         VStack{
-            // TODO - add selectors to sort ingredient list (make default functions in the list and clear on add, make them update onChange)
+            // TODO - Search things behaving weirdly? Kicks you out when you try to edit them. Don't understand.
             LazyVGrid(columns: cols,alignment: .leading){
                 Text("Etape:")
                 Text(stepVM.title)
@@ -43,9 +44,10 @@ struct AddIngredientToStepView: View {
                         }
                     }
                     stepIngredientVM.stepIngredientState.intentToChange(adding: StepIngredient(code: ingredient.code, libelle: ingredient.libelle, quantity: stepIngredientVM.quantity, unit: ingredient.unit, unitprice: ingredient.unitPrice, allergene: ingredient.allergen))
+                    self.presentationMode.wrappedValue.dismiss()
                 }
                 Button("Annuler"){
-                    // cancel operation
+                    self.presentationMode.wrappedValue.dismiss()
                 }
             }
         }

@@ -148,4 +148,8 @@ public class TechnicalDocumentVM: ObservableObject{
             i1, i2 in return i1.rank < i2.rank
         })
     }
+    
+    public func getTechnicalDocumentReference() -> TechnicalDocument{
+        return self.model
+    }
 }
