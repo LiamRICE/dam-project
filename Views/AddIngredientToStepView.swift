@@ -54,6 +54,7 @@ struct AddIngredientToStepView: View {
         .onChange(of: stepIngredientVM.stepIngredientState, perform: {
             newValue in valueChanged(newValue)
         })
+        .navigationTitle("Ajouter un ingrédient")
     }
     
     private func valueChanged(_ newValue: IngredientInStepIntent){

@@ -18,61 +18,82 @@ struct EditTechdocView: View {
     @EnvironmentObject var technicalDocumentVM: TechnicalDocumentVM
     @EnvironmentObject var stepVM: StepVM
     @EnvironmentObject var stepIngredientVM: StepIngredientVM
+    @EnvironmentObject var costsVM: CostsVM
     @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         VStack{
-            // Header
-            LazyVGrid(columns: cols,alignment: .leading){
-                Group{
-                    Text("Intitulé: ")
-                    TextField("Intitulé: ",text: $technicalDocumentVM.name)
-                    Text("Responsable: ")
-                    TextField("Responsable: ",text: $technicalDocumentVM.responsable)
-                    Text("Nombre de Couverts: ")
-                    TextField("Nombre de couverts: ",value: $technicalDocumentVM.nbServed,formatter:formatter)
-                }
-                Group{
-                    Text("Description: ")
-                    TextField("Description: ",text: $technicalDocumentVM.header)
-                    Text("Auteur: ")
-                    TextField("Auteur: ",text: $technicalDocumentVM.author)
-                    Text("Catégorie: ")
-                    TextField("Catégorie: ",text: $technicalDocumentVM.category)
-                }
-            }
-            // Steps
-            LazyVGrid(columns: cols, alignment: .leading){
-                Text("Etapes")
-                NavigationLink(destination: AddStepToTechdocView().onAppear(perform: {
-                    stepVM.setStep(step: Step())
-                }), label: {
-                    Text("Ajouter une étape")
-                })
-            }
             List{
-                ForEach($technicalDocumentVM.steps, id: \.id){$step in
-                    VStack{
-                        LazyVGrid(columns: cols,alignment: .leading){
-                            Text("Titre: ")
-                            TextField("",text:$step.title)
-                            Text("Description: ")
-                            TextField("",text:$step.description)
-                            Text("Ordre:")
-                            TextField("Ordre: ",value: $step.rank,formatter:formatter)
-                        }
-                        NavigationLink(destination: StepIngredientSheetView().onAppear(){
-                            stepVM.setStep(step: step)
-                        }, label:{
-                            Text("Ingredients")
-                        })
+                // Header
+                LazyVGrid(columns: cols,alignment: .leading){
+                    Group{
+                        Text("Intitulé: ")
+                        TextField("Intitulé: ",text: $technicalDocumentVM.name)
+                        Text("Responsable: ")
+                        TextField("Responsable: ",text: $technicalDocumentVM.responsable)
+                        Text("Nombre de Couverts: ")
+                        TextField("Nombre de couverts: ",value: $technicalDocumentVM.nbServed,formatter:formatter)
+                    }
+                    Group{
+                        Text("Description: ")
+                        TextField("Description: ",text: $technicalDocumentVM.header)
+                        Text("Auteur: ")
+                        TextField("Auteur: ",text: $technicalDocumentVM.author)
+                        Text("Catégorie: ")
+                        TextField("Catégorie: ",text: $technicalDocumentVM.category)
                     }
                 }
-            }
-            VStack(alignment:.leading){
-                Toggle("Cacher les couts:", isOn:$technicalDocumentVM.hideCosts)
-                Toggle("Utiliser paramètres du système:", isOn:$technicalDocumentVM.byDefault)
-                Toggle("Utiliser charges:", isOn:$technicalDocumentVM.usesCharges).disabled(!technicalDocumentVM.byDefault)
+                // Steps
+                LazyVGrid(columns: cols, alignment: .leading){
+                    Text("Etapes")
+                    NavigationLink(destination: AddStepToTechdocView().onAppear(perform: {
+                        stepVM.setStep(step: Step())
+                    }), label: {
+                        Text("Ajouter une étape")
+                    })
+                }
+                List{
+                    ForEach($technicalDocumentVM.steps, id: \.id){$step in
+                        VStack{
+                            LazyVGrid(columns: cols,alignment: .leading){
+                                Text("Titre: ")
+                                TextField("",text:$step.title)
+                                Text("Description: ")
+                                TextField("",text:$step.description)
+                                Text("Ordre:")
+                                TextField("Ordre: ",value: $step.rank,formatter:formatter)
+                            }
+                            NavigationLink(destination: StepIngredientListView().onAppear(){
+                                stepVM.setStep(step: step)
+                            }, label:{
+                                Text("Ingredients")
+                            })
+                        }
+                    }
+                }.frame(minHeight:200)
+                if technicalDocumentVM.hideCosts {
+                    VStack{
+                        Text("Coûts de production")
+                        VStack(alignment:.leading){
+                            Text("Coûts matières: \(technicalDocumentVM.calculateMatterCosts())€")
+                            Text("Coûts assaisonnements: \(technicalDocumentVM.calculateSeasoningCosts())€")
+                            Text("Coûts fluides: \(technicalDocumentVM.calculateFluidCosts(costs: costsVM.getCostsReference()))€")
+                            Text("Coûts personnel: \(technicalDocumentVM.calculatePersonnelCosts(costs: costsVM.getCostsReference()))€")
+                        }
+                        Text("Prix de vente")
+                        VStack(alignment:.leading){
+                            Text("Prix de vente: \(technicalDocumentVM.calculateSalesPrice(costs: costsVM.getCostsReference(), byPortions: false))€")
+                            Text("Prix de vente par portion: \(technicalDocumentVM.calculateSalesPrice(costs: costsVM.getCostsReference(), byPortions: true))€")
+                            Text("Bénéfice par portion: \(technicalDocumentVM.calculateProfitByPortion(costs: costsVM.getCostsReference()))€")
+                            Text("Seuil de rentabilité: \(technicalDocumentVM.rentabilityLimit(costs: costsVM.getCostsReference())) portions")
+                        }
+                    }
+                }
+                VStack(alignment:.leading){
+                    Toggle("Montrer:", isOn:$technicalDocumentVM.hideCosts)
+                    Toggle("Utiliser paramètres du système:", isOn:$technicalDocumentVM.byDefault)
+                    Toggle("Utiliser charges:", isOn:$technicalDocumentVM.usesCharges).disabled(!technicalDocumentVM.byDefault)
+                }
             }
             HStack{
                 Button("Modifier"){
@@ -89,6 +110,7 @@ struct EditTechdocView: View {
         .onChange(of: stepVM.stepState, perform: {
             newValue in changeValue(newValue)
         })
+        .navigationTitle(technicalDocumentVM.name)
     }
     
     private func changeValue(_ newValue: TechnicalDocumentIntent){

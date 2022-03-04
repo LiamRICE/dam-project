@@ -63,11 +63,9 @@ public class TechnicalDocumentListVM: ObservableObject{
         self.regex = ""
     }
     
-    func loadModel() {
-        Task{
-            self.model = await DataDAO.getTechnicaldocList()
-            self.techdocs = self.model
-        }
+    func loadModel() async {
+        self.model = await DataDAO.getTechnicaldocList()
+        self.techdocs = self.model
     }
     
     func getCategories() -> [String]{

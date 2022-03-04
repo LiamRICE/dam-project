@@ -93,7 +93,7 @@ public class TechnicalDocumentVM: ObservableObject{
         self.usesCharges = true
         self.assaisonnemments = 0
         self.steps = []
-        self.hideCosts = true
+        self.hideCosts = false
     }
     
     public func setTechnicalDocument(doc: TechnicalDocument){
@@ -111,45 +111,119 @@ public class TechnicalDocumentVM: ObservableObject{
         self.steps = doc.steps
     }
     
-    public func increaseStepRank(step: Step){
-        var switched: Bool = false
-        for s in self.steps{
-            if(switched){
-                s.rank -= 1
-                switched = false
-            }
-            if(step == s){
-                if(step.rank<self.steps.count-1){
-                    step.rank += 1
-                    switched = true
-                }
-            }
-        }
-        steps.sort(by: {
-            i1, i2 in return i1.rank < i2.rank
-        })
-    }
-    
-    public func decreaseStepRank(step: Step){
-        var switched: Bool = false
-        for s in self.steps.reversed(){
-            if(switched){
-                s.rank += 1
-                switched = false
-            }
-            if(step == s){
-                if(step.rank>0){
-                    step.rank -= 1
-                    switched = true
-                }
-            }
-        }
-        steps.sort(by: {
-            i1, i2 in return i1.rank < i2.rank
-        })
-    }
-    
     public func getTechnicalDocumentReference() -> TechnicalDocument{
         return self.model
+    }
+    
+    public func calculateMatterCosts() -> Double{
+        var sum: Double = 0
+        for step in self.steps{
+            for ingredient in step.ingredients{
+                sum += ingredient.quantity * ingredient.unitprice
+            }
+        }
+        return sum
+    }
+    
+    public func calculateFluidCosts(costs: Costs) -> Double{
+        var sum: Double = 0
+        if(self.byDefault){
+            if(costs.usesCharges){
+                for step in self.steps{
+                    sum += (Double(step.time) / 60) * costs.fluides
+                }
+            }
+        } else {
+            if(self.usesCharges){
+                for step in self.steps{
+                    sum += (Double(step.time) / 60) * costs.fluides
+                }
+            }
+        }
+        return sum
+    }
+    
+    public func calculatePersonnelCosts(costs: Costs) -> Double{
+        var sum: Double = 0
+        if(self.byDefault){
+            if(costs.usesCharges){
+                for step in self.steps{
+                    sum += (Double(step.time) / 60) * costs.personnel
+                }
+            }
+        } else {
+            if(self.usesCharges){
+                for step in self.steps{
+                    sum += (Double(step.time) / 60) * costs.personnel
+                }
+            }
+        }
+        return sum
+    }
+    
+    public func calculateSeasoningCosts() -> Double{
+        if(self.assaisonnemments <= 0){
+            return calculateMatterCosts() * 0.05
+        } else{
+            return self.assaisonnemments
+        }
+    }
+    
+    public func totalCosts(costs: Costs) -> Double{
+        return calculateMatterCosts() + calculateFluidCosts(costs: costs) + calculatePersonnelCosts(costs: costs) + calculateSeasoningCosts()
+    }
+    
+    public func calculateSalesPrice(costs: Costs, byPortions: Bool) -> Double{
+        var sum: Double = 0
+        if(self.byDefault){
+            if(costs.usesCharges){
+                sum = totalCosts(costs: costs) * (costs.markup / 100)
+            } else {
+                sum = totalCosts(costs: costs) * (costs.markupNoCharges / 100)
+            }
+        } else {
+            if(self.usesCharges){
+                sum = totalCosts(costs: costs) * (costs.markup / 100)
+            } else {
+                sum = totalCosts(costs: costs) * (costs.markupNoCharges / 100)
+            }
+        }
+        if(byPortions){
+            if(self.nbServed != 0){
+                return sum / Double(self.nbServed)
+            }else{
+                return sum
+            }
+        } else {
+            return sum
+        }
+    }
+    
+    public func calculateProfitByPortion(costs: Costs) -> Double{
+        let c = totalCosts(costs: costs)
+        let v = calculateSalesPrice(costs: costs, byPortions: true) / 1.1
+        return v - (c / Double(self.nbServed))
+    }
+    
+    public func rentabilityLimit(costs: Costs) -> Int{
+        let varCosts = calculateMatterCosts() + calculateSeasoningCosts()
+        let fixCosts = calculatePersonnelCosts(costs: costs) + calculateFluidCosts(costs: costs)
+        let sales = calculateSalesPrice(costs: costs, byPortions: true) / 1.1
+        var mcv: Double = 1
+        if(sales == 0 || self.nbServed == 0){
+            mcv = 1
+        }else{
+            mcv = (sales - varCosts / Double(self.nbServed)) / sales
+        }
+        var result: Double = fixCosts
+        if(mcv != 0){
+            result = fixCosts / mcv
+        }else{
+            result = fixCosts
+        }
+        if(fixCosts == 0){
+            result = totalCosts(costs: costs) / mcv
+        }
+        return Int(result)
     }
 }

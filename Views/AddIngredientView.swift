@@ -52,6 +52,7 @@ struct AddIngredientView: View {
         .onChange(of: self.ingredientListVM.ingredientListState, perform: {
             newValue in valueChanged(newValue)
         })
+        .navigationTitle("Ajouter un ingrédient")
     }
     
     private func valueChanged(_ newValue: IngredientListIntent){

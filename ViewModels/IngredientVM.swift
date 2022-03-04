@@ -30,6 +30,15 @@ public class IngredientVM: ObservableObject{
                 print("IngredientState : modifiedIngredient")
                 Task{await DataDAO.putIngredient(ingredient: ingredient)}
                 self.ingredientState = .modifiedIngredient(ingredient)
+            case .cancellingModifications:
+                self.code = self.model.code
+                self.libelle = self.model.libelle
+                self.unit = self.model.unit
+                self.unitPrice = self.model.unitPrice
+                self.stocks = self.model.stocks
+                self.stockValue = self.model.stockValue
+                self.allergen = self.model.allergen
+                self.ingredientState = .cancelledModifications
             default:
                 return
             }

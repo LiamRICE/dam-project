@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct StepIngredientSheetView: View {
+struct StepIngredientListView: View {
     var cols = [GridItem(.flexible()), GridItem(.flexible())]
     let formatter: NumberFormatter = {
         let formatter = NumberFormatter()
@@ -21,18 +21,19 @@ struct StepIngredientSheetView: View {
     
     var body: some View {
         VStack{
-            Text(stepVM.title)
             NavigationLink(destination: AddIngredientToStepView(), label: {
                 Text("Ajouter un ingrédient")
             })
-            ForEach($stepVM.ingredients, id: \.code){$ingredient in
-                LazyVGrid(columns: cols,alignment: .leading){
-                    Text("Nom: ")
-                    Text(ingredient.libelle)
-                    Text("Quantité: ")
+            List{
+                ForEach($stepVM.ingredients, id: \.code){$ingredient in
                     LazyVGrid(columns: cols,alignment: .leading){
-                        TextField("",value: $ingredient.quantity,formatter:formatter)
-                        TextField("",text: $ingredient.unit)
+                        Text("Nom: ")
+                        Text(ingredient.libelle)
+                        Text("Quantité: ")
+                        LazyVGrid(columns: cols,alignment: .leading){
+                            TextField("",value: $ingredient.quantity,formatter:formatter)
+                            TextField("",text: $ingredient.unit)
+                        }
                     }
                 }
             }
@@ -51,6 +52,7 @@ struct StepIngredientSheetView: View {
         .onChange(of: stepVM.stepState, perform: {
             newValue in valueChanged(newValue)
         })
+        .navigationTitle(stepVM.title)
     }
     
     private func valueChanged(_ newValue: StepIntent){

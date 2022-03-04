@@ -21,7 +21,7 @@ struct ContentView: View {
                     Text("Technical Documents")
                 }
                 NavigationLink(destination: CostsView()){
-                    Text("Options")
+                    Text("Paramètres")
                 }
             }
         }.navigationTitle("Menu")

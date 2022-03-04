@@ -60,6 +60,7 @@ struct AddTechdocView: View {
         .onChange(of: technicalDocumentListVM.technicalDocumentListState, perform: {
             newValue in valueChanged(newValue)
         })
+        .navigationTitle("Ajouter une fiche technique")
     }
     
     private func valueChanged(_ newValue: TechnicalDocumentIntent){

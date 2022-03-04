@@ -38,14 +38,14 @@ struct TechdocListView: View {
                 TextField("search", text: $technicalDocumentListVM.regex)
             }
             Button("Chercher"){
-                var searchObject = TechnicalDocumentListSearch()
+                let searchObject = TechnicalDocumentListSearch()
                 searchObject.setCategory(cat: technicalDocumentListVM.category)
                 searchObject.setSearch(search: technicalDocumentListVM.regex)
                 technicalDocumentListVM.technicalDocumentListState.intentToChange(search: searchObject)
             }
             List{
                 ForEach(technicalDocumentListVM.techdocs, id: \.id){
-                    document in NavigationLink(destination: TechdocView().onAppear(perform: {
+                    document in NavigationLink(destination: TechdocView().onAppear(perform:{
                         technicalDocumentVM.setTechnicalDocument(doc: document)
                     })){
                         Text("\(document.name)")
@@ -55,6 +55,7 @@ struct TechdocListView: View {
         }.onChange(of: technicalDocumentListVM.technicalDocumentListState, perform: {
             newValue in stateChanged(newValue)
         })
+            .navigationTitle("Fiches Techniques")
     }
 }
 

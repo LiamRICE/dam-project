@@ -28,11 +28,13 @@ struct dam_project_app: App {
                 .environmentObject(stepIngredientVM)
                 .environmentObject(stepVM)
                 .environmentObject(costsVM)
-                .task {
+                .task{
                     print("loading data...")
-                    ingredientListVM.loadModel()
-                    technicalDocumentListVM.loadModel()
-                    costsVM.loadModel()
+                    Task{
+                        await ingredientListVM.loadModel()
+                        await technicalDocumentListVM.loadModel()
+                        await costsVM.loadModel()
+                    }
                 }
         }
     }

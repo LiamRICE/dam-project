@@ -48,6 +48,7 @@ struct AddStepToTechdocView: View {
         .onChange(of: stepVM.stepState, perform: {
             newValue in valueChanged(newValue)
         })
+        .navigationTitle("Ajouter une étape")
     }
     
     private func valueChanged(_ newValue: StepIntent){

@@ -37,10 +37,10 @@ struct IngredientView: View {
             }
             HStack{
                 Button("Enregistrer"){
-                    self.ingredientVM.ingredientState.intentToChange(modifying: Ingredient(code: ingredientVM.code, libelle: ingredientVM.libelle, unit: ingredientVM.unit, unitprice: ingredientVM.unitPrice, stocks: ingredientVM.stocks, stockvalue: ingredientVM.stockValue, allergene: ingredientVM.allergen))
+                    ingredientVM.ingredientState.intentToChange(modifying: Ingredient(code: ingredientVM.code, libelle: ingredientVM.libelle, unit: ingredientVM.unit, unitprice: ingredientVM.unitPrice, stocks: ingredientVM.stocks, stockvalue: ingredientVM.stockValue, allergene: ingredientVM.allergen))
                 }
                 Button("Annuler"){
-                    // cancel
+                    ingredientVM.ingredientState.intentToChange(cancel: true)
                 }
                 Button("Supprimer"){
                     showingDeleteConfirm.toggle()
@@ -59,14 +59,16 @@ struct IngredientView: View {
         .onChange(of: self.ingredientVM.ingredientState, perform: {
             newValue in valueChanged(newValue)
         })
+        .navigationTitle(ingredientVM.libelle)
     }
     
     private func valueChanged(_ newValue: IngredientIntent){
         switch self.ingredientVM.ingredientState{
         case .modifiedIngredient(_):
-            print("IngredientState : ready")
             self.ingredientVM.ingredientState = .ready
             self.ingredientListVM.ingredientListState = .changedIngredientList
+        case .cancelledModifications:
+            self.ingredientVM.ingredientState = .ready
         default:
             return
         }

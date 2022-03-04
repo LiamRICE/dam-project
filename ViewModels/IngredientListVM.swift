@@ -66,11 +66,9 @@ public class IngredientListVM: ObservableObject{
         return ret
     }
     
-    public func loadModel() {
-        Task{
-            await self.model.loadData()
-            self.ingredientList = self.model.ingredientList
-        }
+    public func loadModel() async {
+        await self.model.loadData()
+        self.ingredientList = self.model.ingredientList
     }
     
     func getUnusedCode() -> Int{

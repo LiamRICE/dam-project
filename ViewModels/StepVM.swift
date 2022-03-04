@@ -15,7 +15,6 @@ public class StepVM: ObservableObject{
     @Published var time: Int
     @Published var rank: Int
     @Published var ingredients: [StepIngredient]
-    @Published var showingSheet: Bool
     @Published var stepState: StepIntent = .ready{
         didSet{
             switch self.stepState{
@@ -48,6 +47,13 @@ public class StepVM: ObservableObject{
                 else{
                     self.stepState = .addIngredientError(.duplicateError)
                 }
+            case .cancellingModifications:
+                self.id = self.model.id
+                self.title = self.model.title
+                self.description = self.model.description
+                self.time = self.model.time
+                self.rank = self.model.rank
+                self.ingredients = self.model.ingredients
             default:
                 return
             }
@@ -62,7 +68,6 @@ public class StepVM: ObservableObject{
         self.time = model.time
         self.rank = model.rank
         self.ingredients = model.ingredients
-        self.showingSheet = false
     }
     
     public func setStep(step: Step){

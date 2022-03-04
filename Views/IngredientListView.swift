@@ -40,7 +40,7 @@ struct IngredientListView: View {
                 TextField("search", text: $ingredientListVM.regex)
             }
             Button("Chercher"){
-                var searchObject = IngredientListSearch()
+                let searchObject = IngredientListSearch()
                 searchObject.setCategory(cat: ingredientListVM.category)
                 searchObject.setSearch(search: ingredientListVM.regex)
                 ingredientListVM.ingredientListState.intentToChange(search: searchObject)
@@ -58,6 +58,7 @@ struct IngredientListView: View {
         .onChange(of: ingredientListVM.ingredientListState, perform: {
             newValue in stateChanged(newValue)
         })
+        .navigationTitle("Mercuriale")
     }
 }
 

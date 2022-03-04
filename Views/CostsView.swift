@@ -42,6 +42,7 @@ struct CostsView: View {
         .onChange(of: costsVM.costsState, perform: {
             newValue in valueChanged(newValue)
         })
+        .navigationTitle("Paramètres de coûts")
     }
     
     private func valueChanged(_ newValue: CostsIntent){

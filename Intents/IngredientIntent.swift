@@ -11,9 +11,14 @@ public enum IngredientIntent: Equatable{
     case ready
     case modifyingIngredient(Ingredient)
     case modifiedIngredient(Ingredient)
+    case cancellingModifications
+    case cancelledModifications
     
     mutating func intentToChange(modifying: Ingredient){
-        print("IngredientState : modifyingIngredient")
         self = .modifyingIngredient(modifying)
+    }
+    
+    mutating func intentToChange(cancel: Bool){
+        self = .cancellingModifications
     }
 }

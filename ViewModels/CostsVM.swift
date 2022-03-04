@@ -47,14 +47,16 @@ public class CostsVM: ObservableObject{
         self.usesChargesByDefault = true
     }
     
-    public func loadModel(){
-        Task{
-            self.model = await DataDAO.getCosts()
-            self.fluidCost = model.fluides
-            self.personnelCost = model.personnel
-            self.markupWithCharges = model.markup
-            self.markupWithoutCharges = model.markupNoCharges
-            self.usesChargesByDefault = model.usesCharges
-        }
+    public func loadModel() async {
+        self.model = await DataDAO.getCosts()
+        self.fluidCost = model.fluides
+        self.personnelCost = model.personnel
+        self.markupWithCharges = model.markup
+        self.markupWithoutCharges = model.markupNoCharges
+        self.usesChargesByDefault = model.usesCharges
+    }
+    
+    public func getCostsReference() -> Costs{
+        return self.model
     }
 }
