@@ -26,7 +26,9 @@ struct AddStepToTechdocView: View {
                 Text("Titre: ")
                 TextField("",text:$stepVM.title)
                 Text("Description: ")
-                TextField("",text:$stepVM.description)
+            }
+            TextEditor(text:$stepVM.description).frame(height:100)
+            LazyVGrid(columns: cols,alignment: .leading){
                 Text("Durée: ")
                 TextField("Durée: ",value: $stepVM.time, formatter: formatter)
                 Text("Ordre: ")
@@ -37,18 +39,35 @@ struct AddStepToTechdocView: View {
                     stepVM.id = technicalDocumentListVM.getUnusedStepId()
                     stepVM.stepState.intentToChange(adding: Step(id: technicalDocumentListVM.getUnusedStepId(), title: stepVM.title, desc: stepVM.description, time: stepVM.time, rk: stepVM.rank, ingredients: []))
                     self.presentationMode.wrappedValue.dismiss()
-                }
+                }.frame(width: 90)
+                    .padding(3)
+                    .foregroundColor(Color.white)
+                    .background(Color.green)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.green, lineWidth: 5)
+                    )
+                    .padding(15)
                 Button("Annuler"){
                     // TODO - reset modifications
                     stepVM.stepState.intentToChange(cancel: true)
                     self.presentationMode.wrappedValue.dismiss()
-                }
+                }.frame(width: 90)
+                    .padding(3)
+                    .foregroundColor(Color.white)
+                    .background(Color.pink)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.pink, lineWidth: 5)
+                    )
+                    .padding(15)
             }
         }
         .onChange(of: stepVM.stepState, perform: {
             newValue in valueChanged(newValue)
         })
         .navigationTitle("Ajouter une étape")
+        .padding()
     }
     
     private func valueChanged(_ newValue: StepIntent){

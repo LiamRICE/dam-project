@@ -19,6 +19,8 @@ public enum StepIntent: Equatable{
     case addIngredientError(AddIngredientToStepError)
     case cancellingModifications
     case cancelledModifications
+    case deletingIngredient(StepIngredient)
+    case deletedIngredient(StepIngredient)
     
     mutating func intentToChange(ingredients: [StepIngredient]){
         self = .modifyingIngredients(ingredients)
@@ -34,5 +36,9 @@ public enum StepIntent: Equatable{
     
     mutating func intentToChange(adding: StepIngredient){
         self = .addingIngredient(adding)
+    }
+    
+    mutating func intentToChange(deleting: StepIngredient){
+        self = .deletingIngredient(deleting)
     }
 }

@@ -17,6 +17,7 @@ struct dam_project_app: App {
     @StateObject var stepVM: StepVM = StepVM()
     @StateObject var stepIngredientVM: StepIngredientVM = StepIngredientVM()
     @StateObject var costsVM: CostsVM = CostsVM()
+    @StateObject var ticketListVM: TicketListVM = TicketListVM()
     
     var body: some Scene {
         WindowGroup {
@@ -28,6 +29,7 @@ struct dam_project_app: App {
                 .environmentObject(stepIngredientVM)
                 .environmentObject(stepVM)
                 .environmentObject(costsVM)
+                .environmentObject(ticketListVM)
                 .task{
                     print("loading data...")
                     Task{

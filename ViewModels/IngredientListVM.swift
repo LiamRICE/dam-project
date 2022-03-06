@@ -17,6 +17,9 @@ public class IngredientListVM: ObservableObject{
         didSet{
             switch ingredientListState{
             case .changingIngredientList:
+                for ingredient in self.ingredientList{
+                    Task{await DataDAO.putIngredient(ingredient: ingredient)}
+                }
                 self.ingredientList.sort(by: {
                     i1, i2 in return i1.code < i2.code
                 })
@@ -42,6 +45,26 @@ public class IngredientListVM: ObservableObject{
                     self.ingredientListState = .deletedIngredient(ingredient)
                 } else {
                     self.ingredientListState = .deleteIngredientError
+                }
+            case .substractingStocks(let tickets):
+                var error = false
+                for ticket in tickets{
+                    for i1 in ticket.ingredients{
+                        for i2 in ingredientList{
+                            if i1.code == i2.code{
+                                if i2.stocks < i1.quantite{
+                                    error = true
+                                } else {
+                                    i2.stocks -= i1.quantite
+                                }
+                            }
+                        }
+                    }
+                }
+                if error{
+                    self.ingredientListState = .substractStockError
+                } else {
+                    self.ingredientListState = .substractedStocks(tickets)
                 }
             default:
                 return

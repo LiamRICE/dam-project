@@ -35,7 +35,7 @@ struct AddIngredientView: View {
             }
             LazyVGrid(columns:cols, alignment:.leading){
                 Text("Valeur du stock:")
-                Text(String(ingredientVM.stockValue))
+                Text(String(ingredientVM.stocks * ingredientVM.unitPrice))
                 Text("Allergène:")
                 Toggle("Allergène:", isOn: $ingredientVM.allergen)
             }
@@ -43,16 +43,33 @@ struct AddIngredientView: View {
                 Button("Ajouter"){
                     ingredientListVM.ingredientListState.intentToChange(adding: Ingredient(code: ingredientVM.code, libelle: ingredientVM.libelle, unit: ingredientVM.unit, unitprice: ingredientVM.unitPrice, stocks: ingredientVM.stocks, stockvalue: ingredientVM.stockValue, allergene: ingredientVM.allergen))
                     self.presentationMode.wrappedValue.dismiss()
-                }
+                }.frame(width: 90)
+                    .padding(3)
+                    .foregroundColor(Color.white)
+                    .background(Color.green)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.green, lineWidth: 5)
+                    )
+                    .padding(15)
                 Button("Annuler"){
                     self.presentationMode.wrappedValue.dismiss()
-                }
+                }.frame(width: 90)
+                    .padding(3)
+                    .foregroundColor(Color.white)
+                    .background(Color.pink)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.pink, lineWidth: 5)
+                    )
+                    .padding(15)
             }
         }
         .onChange(of: self.ingredientListVM.ingredientListState, perform: {
             newValue in valueChanged(newValue)
         })
         .navigationTitle("Ajouter un ingrédient")
+        .padding()
     }
     
     private func valueChanged(_ newValue: IngredientListIntent){

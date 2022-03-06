@@ -27,7 +27,14 @@ struct IngredientListView: View {
         VStack{
             NavigationLink(destination: AddIngredientView()){
                 Text("Ajouter un ingrédient")
-            }
+                    .padding(5)
+                    .foregroundColor(Color.white)
+                    .background(Color.green)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.green, lineWidth: 5)
+                    )
+            }.padding(5)
             LazyVGrid(columns:cols, alignment:.leading){
                 Picker("Catégorie", selection: $ingredientListVM.category){
                     Text("Tous").tag(-1)
@@ -38,13 +45,16 @@ struct IngredientListView: View {
                     Text("Epicerie").tag(4)
                 }
                 TextField("search", text: $ingredientListVM.regex)
-            }
-            Button("Chercher"){
+            }.padding(.horizontal,20)
+            Button("Rechercher"){
                 let searchObject = IngredientListSearch()
                 searchObject.setCategory(cat: ingredientListVM.category)
                 searchObject.setSearch(search: ingredientListVM.regex)
                 ingredientListVM.ingredientListState.intentToChange(search: searchObject)
-            }
+            }.padding(7).foregroundColor(Color.white).overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.blue, lineWidth: 5)
+            ).background(Color.blue)
             List{
                 ForEach(ingredientListVM.ingredientList, id: \.code){
                     ingredient in NavigationLink(destination: IngredientView().onAppear(perform: {
@@ -53,7 +63,7 @@ struct IngredientListView: View {
                         Text("\(ingredient.code) - \(ingredient.libelle)")
                     }
                 }
-            }
+            }.listStyle(PlainListStyle())
         }
         .onChange(of: ingredientListVM.ingredientListState, perform: {
             newValue in stateChanged(newValue)

@@ -307,6 +307,50 @@ public class DataDAO{
         }
     }
     
+    static func deleteStep(step: Step) async {
+        let dto = StepDTO(id: step.id, title: step.title, desc: step.description, time: step.time, rk: step.rank, ingredients: [])
+        if let encoded = try? JSONEncoder().encode(dto){
+            if let url = URL(string: "https://awi-backend.herokuapp.com/technicaldoc/delete/step"){
+                do{
+                    var request = URLRequest(url: url)
+                    request.httpMethod = "DELETE"
+                    request.httpBody = encoded
+                    request.addValue("application/json", forHTTPHeaderField: "content-type")
+                    if let (_, response) = try? await URLSession.shared.data(for: request){
+                        let httpresponse = response as! HTTPURLResponse
+                        if(httpresponse.statusCode==200){
+                            print("done")
+                        }else{
+                            print("Error \(httpresponse.statusCode): \(HTTPURLResponse.localizedString(forStatusCode: httpresponse.statusCode))")
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    static func deleteIngredientFromStep(step: Step, stepIngredient: StepIngredient) async {
+        let dto = IngredientInStepDTO(id: step.id, code: stepIngredient.code, quantity: stepIngredient.quantity)
+        if let encoded = try? JSONEncoder().encode(dto){
+            if let url = URL(string: "https://awi-backend.herokuapp.com/technicaldoc/delete/ingredientinstep"){
+                do{
+                    var request = URLRequest(url: url)
+                    request.httpMethod = "DELETE"
+                    request.httpBody = encoded
+                    request.addValue("application/json", forHTTPHeaderField: "content-type")
+                    if let (_, response) = try? await URLSession.shared.data(for: request){
+                        let httpresponse = response as! HTTPURLResponse
+                        if(httpresponse.statusCode==200){
+                            print("done")
+                        }else{
+                            print("Error \(httpresponse.statusCode): \(HTTPURLResponse.localizedString(forStatusCode: httpresponse.statusCode))")
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     static func getCosts() async -> Costs{
         var costs: Costs = Costs()
         if let url = URL(string: "https://awi-backend.herokuapp.com/costs/get"){
@@ -344,5 +388,25 @@ public class DataDAO{
                 }
             }
         }
+    }
+    
+    static func getTickets() async -> [Ticket]{
+        var ticketList: [Ticket] = []
+        if let url = URL(string: "https://awi-backend.herokuapp.com/technicaldoc/tickets"){
+            do{
+                let (data, _) = try await URLSession.shared.data(from: url)
+                let decoder = JSONDecoder()
+                if let decoded = try? decoder.decode([TicketDTO].self, from: data){
+                    for iDTO in decoded{
+                        ticketList.append(TicketDTO.translate(ticketdto: iDTO))
+                    }
+                }else{
+                    print("error decoding ingredient data")
+                }
+            }catch{
+                // print
+            }
+        }
+        return ticketList
     }
 }

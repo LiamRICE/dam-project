@@ -18,6 +18,9 @@ public enum IngredientListIntent: Equatable{
     case deletingIngredient(Ingredient)
     case deletedIngredient(Ingredient)
     case deleteIngredientError
+    case substractingStocks([Ticket])
+    case substractedStocks([Ticket])
+    case substractStockError
     
     mutating func intentToChange(){
         self = .changingIngredientList
@@ -34,5 +37,9 @@ public enum IngredientListIntent: Equatable{
     
     mutating func intentToChange(delete: Ingredient){
         self = .deletingIngredient(delete)
+    }
+    
+    mutating func intentToChange(substract: [Ticket]){
+        self = .substractingStocks(substract)
     }
 }

@@ -23,7 +23,15 @@ struct StepIngredientListView: View {
         VStack{
             NavigationLink(destination: AddIngredientToStepView(), label: {
                 Text("Ajouter un ingrédient")
-            })
+            }).frame(width: 90)
+                .padding(3)
+                .foregroundColor(Color.white)
+                .background(Color.green)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.green, lineWidth: 5)
+                )
+                .padding(15)
             List{
                 ForEach($stepVM.ingredients, id: \.code){$ingredient in
                     LazyVGrid(columns: cols,alignment: .leading){
@@ -32,10 +40,15 @@ struct StepIngredientListView: View {
                         Text("Quantité: ")
                         LazyVGrid(columns: cols,alignment: .leading){
                             TextField("",value: $ingredient.quantity,formatter:formatter)
-                            TextField("",text: $ingredient.unit)
+                            Text(ingredient.unit)
                         }
                     }
                 }
+                .onDelete(perform:{ indexSet in
+                    if let index = indexSet.first{
+                        stepVM.stepState.intentToChange(deleting: stepVM.ingredients[index])
+                    }
+                })
             }
             HStack{
                 Button("Enregistrer"){
@@ -43,10 +56,26 @@ struct StepIngredientListView: View {
                         print("\(i.libelle) : \(i.quantity)")
                     }
                     stepVM.stepState.intentToChange(ingredients: stepVM.ingredients)
-                }
+                }.frame(width: 90)
+                    .padding(3)
+                    .foregroundColor(Color.white)
+                    .background(Color.green)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.green, lineWidth: 5)
+                    )
+                    .padding(15)
                 Button("Annuler"){
                     dismiss()
-                }
+                }.frame(width: 90)
+                    .padding(3)
+                    .foregroundColor(Color.white)
+                    .background(Color.pink)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.pink, lineWidth: 5)
+                    )
+                    .padding(15)
             }
         }
         .onChange(of: stepVM.stepState, perform: {
@@ -57,7 +86,7 @@ struct StepIngredientListView: View {
     
     private func valueChanged(_ newValue: StepIntent){
         switch newValue{
-        case .addedIngredient(_), .modifiedIngredients(_):
+        case .addedIngredient(_), .modifiedIngredients(_), .deletedIngredient(_):
             stepVM.stepState = .ready
         default:
             return

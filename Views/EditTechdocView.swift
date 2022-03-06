@@ -49,38 +49,69 @@ struct EditTechdocView: View {
                     NavigationLink(destination: AddStepToTechdocView().onAppear(perform: {
                         stepVM.setStep(step: Step())
                     }), label: {
-                        Text("Ajouter une étape")
-                    })
+                        Text("Ajouter étape")
+                    }).frame(width: 130, height:20)
+                        .padding(3)
+                        .foregroundColor(Color.white)
+                        .background(Color.green)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.green, lineWidth: 5)
+                        )
                 }
                 List{
                     ForEach($technicalDocumentVM.steps, id: \.id){$step in
                         VStack{
+                            Spacer().frame(height:15)
+                            
+                            Text("Titre: ").bold().frame(alignment:.leading)
+                            TextField("",text:$step.title).font(Font.body.bold())
+                            
+                            Divider()
                             LazyVGrid(columns: cols,alignment: .leading){
-                                Text("Titre: ")
-                                TextField("",text:$step.title)
                                 Text("Description: ")
-                                TextField("",text:$step.description)
+                            }
+                            TextEditor(text:$step.description)
+                            Divider()
+                            LazyVGrid(columns: cols,alignment: .leading){
                                 Text("Ordre:")
                                 TextField("Ordre: ",value: $step.rank,formatter:formatter)
                             }
+                            Divider()
                             NavigationLink(destination: StepIngredientListView().onAppear(){
                                 stepVM.setStep(step: step)
                             }, label:{
-                                Text("Ingredients")
-                            })
+                                Text("Modifier")
+                            }).frame(width: 90)
+                                .padding(3)
+                                .foregroundColor(Color.white)
+                                .background(Color.green)
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .stroke(Color.green, lineWidth: 5)
+                                )
+                                .padding(15)
                         }
+                        .listRowSeparatorTint(Color.red)
                     }
-                }.frame(minHeight:200)
+                    .onDelete(perform:{ indexSet in
+                        if let index = indexSet.first{
+                            technicalDocumentVM.technicalDocumentState.intentToChange(deleting: technicalDocumentVM.steps[index])
+                        }
+                    })
+                }.listStyle(PlainListStyle())
+                    .frame(minHeight:200)
                 if technicalDocumentVM.hideCosts {
                     VStack{
-                        Text("Coûts de production")
+                        Text("Coûts de production").underline()
                         VStack(alignment:.leading){
                             Text("Coûts matières: \(technicalDocumentVM.calculateMatterCosts())€")
                             Text("Coûts assaisonnements: \(technicalDocumentVM.calculateSeasoningCosts())€")
                             Text("Coûts fluides: \(technicalDocumentVM.calculateFluidCosts(costs: costsVM.getCostsReference()))€")
                             Text("Coûts personnel: \(technicalDocumentVM.calculatePersonnelCosts(costs: costsVM.getCostsReference()))€")
                         }
-                        Text("Prix de vente")
+                        Spacer().frame(height:10)
+                        Text("Prix de vente").underline()
                         VStack(alignment:.leading){
                             Text("Prix de vente: \(technicalDocumentVM.calculateSalesPrice(costs: costsVM.getCostsReference(), byPortions: false))€")
                             Text("Prix de vente par portion: \(technicalDocumentVM.calculateSalesPrice(costs: costsVM.getCostsReference(), byPortions: true))€")
@@ -90,18 +121,34 @@ struct EditTechdocView: View {
                     }
                 }
                 VStack(alignment:.leading){
-                    Toggle("Montrer:", isOn:$technicalDocumentVM.hideCosts)
+                    Toggle("Montrer les coûts:", isOn:$technicalDocumentVM.hideCosts)
                     Toggle("Utiliser paramètres du système:", isOn:$technicalDocumentVM.byDefault)
                     Toggle("Utiliser charges:", isOn:$technicalDocumentVM.usesCharges).disabled(!technicalDocumentVM.byDefault)
                 }
             }
             HStack{
-                Button("Modifier"){
+                Button("Enregistrer"){
                     technicalDocumentVM.technicalDocumentState.intentToChange(document: TechnicalDocument(id: technicalDocumentVM.id, name: technicalDocumentVM.name, header: technicalDocumentVM.header, author: technicalDocumentVM.author, respo: technicalDocumentVM.responsable, cat: technicalDocumentVM.category, nbServed: technicalDocumentVM.nbServed, def: technicalDocumentVM.byDefault, charges: technicalDocumentVM.usesCharges, ass: technicalDocumentVM.assaisonnemments, steps: technicalDocumentVM.steps))
-                }
+                }.frame(width: 90)
+                    .padding(3)
+                    .foregroundColor(Color.white)
+                    .background(Color.green)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.green, lineWidth: 5)
+                    )
+                    .padding(15)
                 Button("Annuler"){
                     technicalDocumentVM.technicalDocumentState.intentToChange(cancel: true)
-                }
+                }.frame(width: 90)
+                    .padding(3)
+                    .foregroundColor(Color.white)
+                    .background(Color.pink)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.pink, lineWidth: 5)
+                    )
+                    .padding(15)
             }
         }
         .onChange(of: technicalDocumentVM.technicalDocumentState, perform: {
@@ -115,7 +162,7 @@ struct EditTechdocView: View {
     
     private func changeValue(_ newValue: TechnicalDocumentIntent){
         switch newValue{
-        case .editedTechnicalDocument(_), .cancelledTechnicalDocumentModifications, .addedStepToDocument(_):
+        case .editedTechnicalDocument(_), .cancelledTechnicalDocumentModifications, .addedStepToDocument(_), .deletedStepFromDocument(_):
             technicalDocumentVM.technicalDocumentState = .ready
         default:
             return

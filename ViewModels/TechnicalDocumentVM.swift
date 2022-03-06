@@ -74,6 +74,15 @@ public class TechnicalDocumentVM: ObservableObject{
                 self.steps.append(step)
                 self.model.steps = self.steps
                 self.technicalDocumentState = .addedStepToDocument(step)
+            case .deletingStepFromDocument(let step):
+                if let index = self.steps.firstIndex(of: step){
+                    Task{
+                        await DataDAO.deleteStep(step: step)
+                    }
+                    self.steps.remove(at: index)
+                    self.model.steps = self.steps
+                    self.technicalDocumentState = .deletedStepFromDocument(step)
+                }
             default:
                 return
             }

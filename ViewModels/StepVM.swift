@@ -54,6 +54,15 @@ public class StepVM: ObservableObject{
                 self.time = self.model.time
                 self.rank = self.model.rank
                 self.ingredients = self.model.ingredients
+            case .deletingIngredient(let ingredient):
+                if let index = self.ingredients.firstIndex(of: ingredient){
+                    Task{
+                        await DataDAO.deleteIngredientFromStep(step: self.model, stepIngredient: ingredient)
+                    }
+                    self.ingredients.remove(at: index)
+                    self.model.ingredients = self.ingredients
+                    self.stepState = .deletedIngredient(ingredient)
+                }
             default:
                 return
             }

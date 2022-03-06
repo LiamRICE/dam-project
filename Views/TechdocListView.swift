@@ -26,7 +26,14 @@ struct TechdocListView: View {
         VStack{
             NavigationLink(destination: AddTechdocView()){
                 Text("Ajouter une fiche")
-            }.onAppear(perform: {
+                    .padding(5)
+                    .foregroundColor(Color.white)
+                    .background(Color.green)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.green, lineWidth: 5)
+                    )
+            }.padding(5).onAppear(perform: {
                 technicalDocumentVM.setTechnicalDocument(doc: TechnicalDocument())
             })
             LazyVGrid(columns:cols, alignment:.leading){
@@ -34,15 +41,18 @@ struct TechdocListView: View {
                     ForEach(technicalDocumentListVM.getCategories(), id:\.self){ category in
                         Text(category).tag(category)
                     }
-                }
+                }.padding(.horizontal,20)
                 TextField("search", text: $technicalDocumentListVM.regex)
             }
-            Button("Chercher"){
+            Button("Rechercher"){
                 let searchObject = TechnicalDocumentListSearch()
                 searchObject.setCategory(cat: technicalDocumentListVM.category)
                 searchObject.setSearch(search: technicalDocumentListVM.regex)
                 technicalDocumentListVM.technicalDocumentListState.intentToChange(search: searchObject)
-            }
+            }.padding(7).foregroundColor(Color.white).overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(Color.blue, lineWidth: 5)
+            ).background(Color.blue)
             List{
                 ForEach(technicalDocumentListVM.techdocs, id: \.id){
                     document in NavigationLink(destination: TechdocView().onAppear(perform:{
@@ -51,7 +61,7 @@ struct TechdocListView: View {
                         Text("\(document.name)")
                     }
                 }
-            }
+            }.listStyle(PlainListStyle())
         }.onChange(of: technicalDocumentListVM.technicalDocumentListState, perform: {
             newValue in stateChanged(newValue)
         })

@@ -45,16 +45,33 @@ struct AddIngredientToStepView: View {
                     }
                     stepIngredientVM.stepIngredientState.intentToChange(adding: StepIngredient(code: ingredient.code, libelle: ingredient.libelle, quantity: stepIngredientVM.quantity, unit: ingredient.unit, unitprice: ingredient.unitPrice, allergene: ingredient.allergen))
                     self.presentationMode.wrappedValue.dismiss()
-                }
+                }.frame(width: 90)
+                    .padding(3)
+                    .foregroundColor(Color.white)
+                    .background(Color.green)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.green, lineWidth: 5)
+                    )
+                    .padding(15)
                 Button("Annuler"){
                     self.presentationMode.wrappedValue.dismiss()
-                }
+                }.frame(width: 90)
+                    .padding(3)
+                    .foregroundColor(Color.white)
+                    .background(Color.pink)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.pink, lineWidth: 5)
+                    )
+                    .padding(15)
             }
         }
         .onChange(of: stepIngredientVM.stepIngredientState, perform: {
             newValue in valueChanged(newValue)
         })
         .navigationTitle("Ajouter un ingrédient")
+        .padding()
     }
     
     private func valueChanged(_ newValue: IngredientInStepIntent){
