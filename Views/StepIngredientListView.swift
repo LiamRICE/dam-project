@@ -49,7 +49,7 @@ struct StepIngredientListView: View {
                         stepVM.stepState.intentToChange(deleting: stepVM.ingredients[index])
                     }
                 })
-            }
+            }.listStyle(PlainListStyle())
             HStack{
                 Button("Enregistrer"){
                     for i in stepVM.ingredients{

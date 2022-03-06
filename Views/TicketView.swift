@@ -19,24 +19,22 @@ struct TicketView: View {
     var body: some View {
         // for tickets in ticket list
         VStack{
-            Text("Etiquette")
+            Text("Etiquette").bold()
             List{
                 ForEach(ticketListVM.receiptList, id: \.id){ticket in
                     HStack{
                         LazyVGrid(columns:cols, alignment:.leading){
-                            Text("Intitulé: ")
+                            Text("Intitulé: ").bold()
                             Text(ticket.name)
-                            Text("Quantité: ")
-                            Text("")
                         }
                     }
                     VStack(alignment: .leading){
                         LazyVGrid(columns:cols, alignment:.leading){
-                            Text("Ingredients: ")
+                            Text("Ingredients: ").bold()
                         }
                         ForEach(ticket.ingredients, id: \.code){ingredient in
                             VStack{
-                                Text(ingredient.libelle)
+                                Text("\u{2022} "+ingredient.libelle)
                             }
                         }
                     }

@@ -19,7 +19,7 @@ struct TicketListView: View {
                 ForEach(ticketListVM.ticketList, id: \.id){ticket in
                     VStack{
                         LazyVGrid(columns:cols, alignment:.leading){
-                            Text("Intitulé")
+                            Text("Intitulé: ").bold()
                             Text(ticket.name);
                         }
                         Button("Ajouter"){
@@ -38,7 +38,7 @@ struct TicketListView: View {
                 ForEach(ticketListVM.receiptList, id: \.id){ticket in
                     VStack{
                         LazyVGrid(columns:cols, alignment:.leading){
-                            Text("Intitulé: ")
+                            Text("Intitulé: ").bold()
                             Text(ticket.name)
                         }
                         Button("Enlever"){
